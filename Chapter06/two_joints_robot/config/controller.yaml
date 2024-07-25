@@ -1,0 +1,44 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 100  # Hz
+
+    position_control:
+      type: forward_command_controller/ForwardCommandController
+
+    velocity_control:
+      type: forward_command_controller/ForwardCommandController
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+    sine_controller:
+      type: sine_controller/SineController
+
+position_control:
+  ros__parameters:
+    joints:
+      - base_joint
+      - link1_link2
+    interface_name: position
+    state_interfaces:
+      - position
+      - velocity
+      
+
+velocity_control:
+  ros__parameters:
+    joints:
+      - base_joint
+      - link1_link2
+    interface_name: velocity
+    state_interfaces:
+      - position
+      - velocity
+
+sine_controller:
+  ros__parameters:
+    update_rate: 100
+    joints:
+      - base_joint
+      - link1_link2
+

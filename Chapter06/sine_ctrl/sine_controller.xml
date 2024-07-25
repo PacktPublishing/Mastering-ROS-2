@@ -1,0 +1,7 @@
+<library path="sine_controller">
+  <class name="sine_controller/SineController" type="sine_controller::SineController" base_class_type="controller_interface::ControllerInterface">
+  <description>
+    The joint controller commands a group of joints in a given interface
+  </description>
+  </class>
+</library>
