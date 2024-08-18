@@ -98,7 +98,7 @@
     
     <ros2_control name="IgnitionSystem" type="system">
         <hardware>
-            <plugin>ign_ros2_control/IgnitionSystem</plugin>
+            <plugin>gz_ros2_control/IgnitionSystem</plugin>
         </hardware>
         <joint name="revolute_joint">
             <command_interface name="position" />
@@ -120,9 +120,6 @@
         <plugin filename="ign_ros2_control-system" name="ign_ros2_control::IgnitionROS2ControlPlugin">
             
             <parameters>$(find two_joints_robot)/controller.yaml</parameters>
-            <!--
-            <parameters>/home/user/ros2_ws/install/two_joints_robot/share/two_joints_robot/config/controller.yaml</parameters>
-            -->
         </plugin>
     </gazebo>
     -->

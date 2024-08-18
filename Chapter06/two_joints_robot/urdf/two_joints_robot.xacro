@@ -110,7 +110,7 @@
     <!-- Gazebo plugin configuration -->
     <ros2_control name="2DofPosition" type="system">
         <hardware>
-            <plugin>ign_ros2_control/IgnitionSystem</plugin>
+            <plugin>gz_ros2_control/GazeboSimSystem</plugin>
         </hardware>
         <joint name="base_joint">
             <command_interface name="position" />
@@ -135,7 +135,7 @@
 
     
     <gazebo>
-        <plugin filename="ign_ros2_control-system" name="ign_ros2_control::IgnitionROS2ControlPlugin">
+        <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
             <parameters>$(find two_joints_robot)/config/controller.yaml</parameters>
         </plugin>
     </gazebo>

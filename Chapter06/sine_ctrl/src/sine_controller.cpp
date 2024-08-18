@@ -53,7 +53,7 @@ namespace sine_controller {
           controller_interface::interface_configuration_type::INDIVIDUAL, state_interfaces_config_names};
     }
 
-    // setta dove inviare il comando
+    
     controller_interface::InterfaceConfiguration command_interface_configuration() const
     {
       std::vector<std::string> command_interfaces_config_names;
@@ -63,14 +63,13 @@ namespace sine_controller {
           controller_interface::interface_configuration_type::INDIVIDUAL, command_interfaces_config_names};
     }
 
-    // configura il controllore la prima volta che viene caricata
     controller_interface::CallbackReturn on_configure(const rclcpp_lifecycle::State & /*previous_state*/)
     {
       
-     _sine_param_sub =   get_node()->create_subscription<std_msgs::msg::Float32MultiArray>("/sine_param", 10, 
+      _sine_param_sub =   get_node()->create_subscription<std_msgs::msg::Float32MultiArray>("/sine_param", 10, 
             std::bind(&SineController::sine_param_cb, this, std::placeholders::_1));
-      //update_rate_ ereditasto
-      _dt = rclcpp::Duration(std::chrono::duration<double, std::milli>(1e3 / update_rate_));
+
+      _dt = rclcpp::Duration(std::chrono::duration<double, std::milli>(1e3 / get_update_rate()));
 
       _amplitude[0] = 0.0;
       _amplitude[1] = 0.0;
