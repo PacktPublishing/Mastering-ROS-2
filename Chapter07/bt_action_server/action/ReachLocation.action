@@ -1,0 +1,14 @@
+# Goal
+float32 x
+float32 y
+float32 timeout
+
+---
+# Result
+bool success
+string message
+
+---
+# Feedback
+float32 current_x
+float32 current_y	

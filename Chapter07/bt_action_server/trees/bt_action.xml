@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root BTCPP_format="4">
+  <BehaviorTree ID="bt_action">
+    <Sequence>
+      <WaitForServer server_name="reach_location"/>
+      <CallAction server_name="reach_location"
+                  x="10"
+                  y="4"
+                  timeout="15"/>
+    </Sequence>
+  </BehaviorTree>
+
+  <!-- Description of Node Models (used by Groot) -->
+  <TreeNodesModel>
+    <Action ID="CallAction"
+            editable="true">
+      <input_port name="server_name"/>
+      <input_port name="x"/>
+      <input_port name="y"/>
+      <input_port name="timeout"/>
+    </Action>
+    <Action ID="WaitForServer"
+            editable="true">
+      <input_port name="server_name"/>
+    </Action>
+  </TreeNodesModel>
+
+</root>

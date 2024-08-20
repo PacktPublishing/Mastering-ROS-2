@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root BTCPP_format="4"
+      main_tree_to_execute="RosIntegration">
+  <BehaviorTree ID="RosIntegration">
+    <Sequence>
+      <SubTree ID="Subtree"
+               _autoremap="true"/>
+      <PublishResult topic_name="generated_number"
+                     generated_number="{generated_number}"/>
+    </Sequence>
+  </BehaviorTree>
+
+  <BehaviorTree ID="Subtree">
+    <Fallback>
+      <CheckNumber1 check_value="30"
+                    generated_number="{generated_number}"/>
+      <Fallback>
+        <CheckNumber2 check_value="50"
+                      generated_number="{generated_number}"/>
+        <ForceSuccess>
+          <CheckNumber3 check_value="80"
+                        generated_number="{generated_number}"/>
+        </ForceSuccess>
+      </Fallback>
+    </Fallback>
+  </BehaviorTree>
+
+  <!-- Description of Node Models (used by Groot) -->
+  <TreeNodesModel>
+    <Action ID="CheckNumber1"
+            editable="true">
+      <input_port name="check_value"
+                  default="100"/>
+      <output_port name="generated_number"/>
+    </Action>
+    <Action ID="CheckNumber2"
+            editable="true">
+      <input_port name="check_value"
+                  default="100"/>
+      <output_port name="generated_number"/>
+    </Action>
+    <Action ID="CheckNumber3"
+            editable="true">
+      <input_port name="check_value"
+                  default="100"/>
+      <output_port name="generated_number"/>
+    </Action>
+    <Action ID="PublishResult"
+            editable="true">
+      <input_port name="topic_name"/>
+      <input_port name="generated_number"/>
+    </Action>
+  </TreeNodesModel>
+
+</root>

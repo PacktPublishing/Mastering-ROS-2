@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root BTCPP_format="4">
+  <BehaviorTree ID="sequnce">
+    <Sequence>
+      <HelloNode1 msg="Hello from Node1"/>
+      <HelloNode2 msg="Hello from Node2"/>
+    </Sequence>
+  </BehaviorTree>
+
+  <!-- Description of Node Models (used by Groot) -->
+  <TreeNodesModel>
+    <Action ID="HelloNode1"
+            editable="true">
+      <input_port name="msg"
+                  default="-1"/>
+    </Action>
+    <Action ID="HelloNode2"
+            editable="true">
+      <input_port name="msg"
+                  default="-1"/>
+    </Action>
+  </TreeNodesModel>
+
+</root>
