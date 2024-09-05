@@ -1,0 +1,12 @@
+initial_joint_positions:
+  panda_arm:
+    joint1: 0.0
+    joint2: -0.7853981633974483
+    joint3: 0.0
+    joint4: -2.356194490192345
+    joint5: 0.0
+    joint6: 1.5707963267948966
+    joint7: 0.7853981633974483
+  panda_gripper:
+    joint1: 0.0
+    joint2: 0.0

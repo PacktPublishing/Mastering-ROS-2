@@ -1,0 +1,199 @@
+<?xml version="1.0"?>
+<!-- Macros for general boilerplate -->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!--                   -->
+  <!-- Imported elements -->
+  <!--                   -->
+  <xacro:include filename="$(find panda_description)/urdf/panda_inertial.xacro"/>
+
+
+  <!--       -->
+  <!-- Macro -->
+  <!--       -->
+  <xacro:property name="mesh_offset_rpy" value="0 0 0"/>
+  <xacro:macro name="panda_link" params="
+    link_name
+    mesh
+    collision:=true
+    mu:=1.0
+    mesh_offset_rpy:=${mesh_offset_rpy}
+    gazebo_self_collide:=false
+  ">
+    <link name="${link_name}">
+      <visual>
+        <origin xyz="0 0 0" rpy="${mesh_offset_rpy}"/>
+        <geometry>
+          <mesh filename="package://panda_description/meshes/visual/${mesh}.dae"/>
+        </geometry>
+      </visual>
+
+      <xacro:if value="${collision}">
+        <collision>
+          <origin xyz="0 0 0" rpy="${mesh_offset_rpy}"/>
+          <geometry>
+            <mesh filename="package://panda_description/meshes/collision/${mesh}.stl"/>
+          </geometry>
+        </collision>
+      </xacro:if>
+
+      <xacro:panda_inertial mesh="${mesh}" mesh_offset_rpy="${mesh_offset_rpy}"/>
+    </link>
+
+    <gazebo reference="${link_name}">
+      <mu1 value="${mu}"/>
+      <mu2 value="${mu}"/>
+      <xacro:if value="${gazebo_self_collide}">
+        <self_collide>true</self_collide>
+      </xacro:if>
+    </gazebo>
+  </xacro:macro>
+
+
+  <!--       -->
+  <!-- Macro -->
+  <!--       -->
+  <xacro:macro name="panda_joint" params="
+    parent
+    child
+    joint_name
+    joint_type
+    joint_origin_xyz
+    joint_origin_rpy
+    joint_axis_xyz:=unset
+    joint_lower_limit:=unset
+    joint_upper_limit:=unset
+    joint_velocity_limit:=unset
+    joint_torque_limit:=unset
+    joint_damping:=0.0
+    joint_friction:=0.0
+    mimic_joint:=none
+    safety_limits:=false
+    safety_position_margin:=0.0
+    safety_k_position:=0.0
+    safety_k_velocity:=0.0
+    gazebo_spring_stiffness:=0.0
+    gazebo_spring_reference:=0.0
+    gazebo_preserve_fixed_joint:=false
+  ">
+    <!-- Make sure limits are set for non-fixed joints -->
+    <xacro:unless value="${joint_type == 'fixed'}">
+      <xacro:if value="${joint_axis_xyz == 'unset'}">
+        <xacro:ERROR_joint_axis_xyz_undefined/>
+      </xacro:if>
+      <xacro:if value="${joint_lower_limit == 'unset'}">
+        <xacro:ERROR_joint_lower_limit_undefined/>
+      </xacro:if>
+      <xacro:if value="${joint_upper_limit == 'unset'}">
+        <xacro:ERROR_joint_upper_limit_undefined/>
+      </xacro:if>
+      <xacro:if value="${joint_velocity_limit == 'unset'}">
+        <xacro:ERROR_joint_velocity_limit_undefined/>
+      </xacro:if>
+      <xacro:if value="${joint_torque_limit == 'unset'}">
+        <xacro:ERROR_joint_torque_limit_undefined/>
+      </xacro:if>
+    </xacro:unless>
+
+    <joint name="${joint_name}" type="${joint_type}">
+      <parent link="${parent}"/>
+      <child link="${child}"/>
+      <origin xyz="${joint_origin_xyz}" rpy="${joint_origin_rpy}"/>
+      <xacro:unless value="${joint_type == 'fixed'}">
+        <axis xyz="${joint_axis_xyz}"/>
+        <xacro:if value="${joint_type == 'continuous'}">
+          <limit effort="${joint_torque_limit}" velocity="${joint_velocity_limit}"/>
+        </xacro:if>
+        <xacro:unless value="${joint_type == 'continuous'}">
+          <limit lower="${joint_lower_limit}" upper="${joint_upper_limit}" effort="${joint_torque_limit}" velocity="${joint_velocity_limit}" acceleration="${joint_velocity_limit}"/>
+        </xacro:unless>
+        <xacro:if value="${safety_limits}">
+          <safety_controller soft_lower_limit="${joint_lower_limit+safety_position_margin}" soft_upper_limit="${joint_upper_limit-safety_position_margin}" k_position="${safety_k_position}" k_velocity="${safety_k_velocity}"/>
+        </xacro:if>
+        <dynamics damping="${joint_damping}" friction="${joint_friction}"/>
+      </xacro:unless>
+      <xacro:unless value="${mimic_joint == 'none'}">
+        <mimic joint="${mimic_joint}"/>
+      </xacro:unless>
+    </joint>
+
+    <!-- Transmission for non-fixed joints -->
+    <xacro:unless value="${joint_type == 'fixed'}">
+      <transmission name="${joint_name}_transmission">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="${joint_name}">
+          <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="${joint_name}_actuator">
+          <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+      </transmission>
+    </xacro:unless>
+
+    <!-- Spring stiffness and reference for non-fifex joint -->
+    <xacro:unless value="${joint_type == 'fixed'}">
+      <gazebo reference="${joint_name}">
+        <springStiffness value="${gazebo_spring_stiffness}"/>
+        <springReference value="${gazebo_spring_reference}"/>
+      </gazebo>
+    </xacro:unless>
+
+    <!-- Preserve fixed joint, if desired -->
+    <xacro:if value="${joint_type == 'fixed' and gazebo_preserve_fixed_joint}">
+      <gazebo reference="${joint_name}">
+        <preserveFixedJoint>true</preserveFixedJoint>
+        <disableFixedJointLumping>true</disableFixedJointLumping>
+      </gazebo>
+    </xacro:if>
+  </xacro:macro>
+
+
+  <!--       -->
+  <!-- Macro -->
+  <!--       -->
+  <xacro:macro name="panda_virtual_link" params="
+    parent
+    link_name
+    joint_origin_xyz
+    joint_origin_rpy
+    gazebo_preserve_fixed_joint:=false
+  ">
+    <xacro:panda_dummy_link
+      link_name="${link_name}"
+      gazebo_preserve_fixed_joint="${gazebo_preserve_fixed_joint}"
+    />
+
+    <joint name="${link_name}_virtual_joint" type="fixed">
+      <parent link="${parent}"/>
+      <child link="${link_name}"/>
+      <origin xyz="${joint_origin_xyz}" rpy="${joint_origin_rpy}"/>
+    </joint>
+  </xacro:macro>
+
+
+  <!--       -->
+  <!-- Macro -->
+  <!--       -->
+  <xacro:macro name="panda_dummy_link" params="
+    link_name
+    gazebo_preserve_fixed_joint:=false
+  ">
+    <link name="${link_name}">
+      <xacro:if value="${gazebo_preserve_fixed_joint}">
+        <inertial>
+          <mass value="1e-5"/>
+          <inertia ixx="1e-35" iyy="1e-35" izz="1e-35" ixy="0.0" ixz="0.0" iyz="0.0"/>
+        </inertial>
+      </xacro:if>
+    </link>
+
+    <!-- Preserve fixed joint, if desired -->
+    <xacro:if value="${gazebo_preserve_fixed_joint}">
+      <gazebo reference="${link_name}_virtual_joint">
+        <preserveFixedJoint>true</preserveFixedJoint>
+        <disableFixedJointLumping>true</disableFixedJointLumping>
+      </gazebo>
+    </xacro:if>
+  </xacro:macro>
+
+</robot>

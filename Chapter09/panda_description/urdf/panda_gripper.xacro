@@ -1,0 +1,148 @@
+<?xml version="1.0"?>
+<!-- Xacro for Franka Emika Panda gripper -->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!--                   -->
+  <!-- Imported elements -->
+  <!--                   -->
+  <xacro:include filename="$(find panda_description)/urdf/panda_utils.xacro"/>
+
+  <!--            -->
+  <!-- Properties -->
+  <!--            -->
+  <xacro:property name="joint_wrist_name" value="joint_wrist"/>
+  <xacro:property name="joint_wrist_type" value="fixed"/>
+  <xacro:property name="hand_name" value="hand"/>
+  <xacro:property name="hand_mu" value="0.85"/>
+
+  <xacro:property name="joint_finger1_name" value="finger_joint1"/>
+  <xacro:property name="joint_finger1_type" value="prismatic"/>
+  <xacro:property name="joint_finger1_origin_xyz" value="0 0 0.0584"/>
+  <xacro:property name="joint_finger1_origin_rpy" value="0 0 0"/>
+  <xacro:property name="joint_finger1_axis_xyz" value="0 1 0"/>
+  <xacro:property name="joint_finger1_lower_limit" value="0"/>
+  <xacro:property name="joint_finger1_upper_limit" value="0.04"/>
+  <xacro:property name="joint_finger1_velocity_limit" value="0.2"/>
+  <xacro:property name="joint_finger1_torque_limit" value="20"/>
+  <xacro:property name="joint_finger1_damping" value="3.0"/>
+  <xacro:property name="joint_finger1_friction" value="0.4"/>
+  <xacro:property name="link_finger1_name" value="leftfinger"/>
+  <xacro:property name="link_finger1_mu" value="1.13"/>
+  <xacro:property name="link_finger1_mesh_offset" value="0 0 0"/>
+
+  <xacro:property name="joint_finger2_name" value="finger_joint2"/>
+  <xacro:property name="joint_finger2_type" value="prismatic"/>
+  <xacro:property name="joint_finger2_origin_xyz" value="0 0 0.0584"/>
+  <xacro:property name="joint_finger2_origin_rpy" value="0 0 0"/>
+  <xacro:property name="joint_finger2_axis_xyz" value="0 -1 0"/>
+  <xacro:property name="joint_finger2_lower_limit" value="0"/>
+  <xacro:property name="joint_finger2_upper_limit" value="0.04"/>
+  <xacro:property name="joint_finger2_velocity_limit" value="0.2"/>
+  <xacro:property name="joint_finger2_torque_limit" value="20"/>
+  <xacro:property name="joint_finger2_damping" value="3.0"/>
+  <xacro:property name="joint_finger2_friction" value="0.4"/>
+  <xacro:property name="link_finger2_name" value="rightfinger"/>
+  <xacro:property name="link_finger2_mu" value="1.13"/>
+  <xacro:property name="link_finger2_mesh_offset" value="0 0 ${pi}"/>
+
+  <xacro:property name="ee_name" value="hand_tcp"/>
+  <xacro:property name="ee_origin_xyz" value="0 0 0.1034"/>
+  <xacro:property name="ee_origin_rpy" value="0 0 0"/>
+
+
+  <!--       -->
+  <!-- Macro -->
+  <!--       -->
+  <xacro:property name="default_origin_xyz" value="0 0 0"/>
+  <xacro:property name="default_origin_rpy" value="0 0 0"/>
+  <xacro:macro name="panda_gripper" params="
+    wrist_flange
+    prefix:=panda_
+    origin_xyz:=${default_origin_xyz}
+    origin_rpy:=${default_origin_rpy}
+    collision:=true
+    ros2_control:=true
+    ros2_control_plugin:=fake
+    ros2_control_command_interface:=effort
+    gazebo_preserve_fixed_joint:=false
+  ">
+    <!-- Wrist -->
+    <xacro:panda_joint
+    parent="${wrist_flange}"
+    child="${prefix}${hand_name}"
+    joint_name="${prefix}${joint_wrist_name}"
+    joint_type="${joint_wrist_type}"
+    joint_origin_xyz="${origin_xyz}"
+    joint_origin_rpy="${origin_rpy}"
+    gazebo_preserve_fixed_joint="${gazebo_preserve_fixed_joint}"
+    />
+    <xacro:panda_link
+    link_name="${prefix}${hand_name}"
+    mesh="${hand_mesh}"
+    collision="${collision}"
+    mu="${hand_mu}"
+    />
+
+    <!-- Finger 1 -->
+    <xacro:panda_joint
+    parent="${prefix}${hand_name}"
+    child="${prefix}${link_finger1_name}"
+    joint_name="${prefix}${joint_finger1_name}"
+    joint_type="${joint_finger1_type}"
+    joint_origin_xyz="${joint_finger1_origin_xyz}"
+    joint_origin_rpy="${joint_finger1_origin_rpy}"
+    joint_axis_xyz="${joint_finger1_axis_xyz}"
+    joint_lower_limit="${joint_finger1_lower_limit}"
+    joint_upper_limit="${joint_finger1_upper_limit}"
+    joint_velocity_limit="${joint_finger1_velocity_limit}"
+    joint_torque_limit="${joint_finger1_torque_limit}"
+    joint_damping="${joint_finger1_damping}"
+    joint_friction="${joint_finger1_friction}"
+    gazebo_preserve_fixed_joint="${gazebo_preserve_fixed_joint}"
+    />
+    <xacro:panda_link
+    link_name="${prefix}${link_finger1_name}"
+    mesh="${finger_mesh}"
+    collision="${collision}"
+    mu="${link_finger1_mu}"
+    mesh_offset_rpy="${link_finger1_mesh_offset}"
+    />
+
+    <!-- Finger 2 -->
+    <xacro:panda_joint
+    parent="${prefix}${hand_name}"
+    child="${prefix}${link_finger2_name}"
+    joint_name="${prefix}${joint_finger2_name}"
+    joint_type="${joint_finger2_type}"
+    joint_origin_xyz="${joint_finger2_origin_xyz}"
+    joint_origin_rpy="${joint_finger2_origin_rpy}"
+    joint_axis_xyz="${joint_finger2_axis_xyz}"
+    joint_lower_limit="${joint_finger2_lower_limit}"
+    joint_upper_limit="${joint_finger2_upper_limit}"
+    joint_velocity_limit="${joint_finger2_velocity_limit}"
+    joint_torque_limit="${joint_finger2_torque_limit}"
+    joint_damping="${joint_finger2_damping}"
+    joint_friction="${joint_finger2_friction}"
+    gazebo_preserve_fixed_joint="${gazebo_preserve_fixed_joint}"
+    />
+    <xacro:panda_link
+    link_name="${prefix}${link_finger2_name}"
+    mesh="${finger_mesh}"
+    collision="${collision}"
+    mu="${link_finger2_mu}"
+    mesh_offset_rpy="${link_finger2_mesh_offset}"
+    />
+
+    <!-- End effector -->
+    <xacro:panda_virtual_link
+    parent="${prefix}${hand_name}"
+    link_name="${prefix}${ee_name}"
+    joint_origin_xyz="${ee_origin_xyz}"
+    joint_origin_rpy="${ee_origin_rpy}"
+    gazebo_preserve_fixed_joint="${gazebo_preserve_fixed_joint}"
+    />
+
+  
+  </xacro:macro>
+
+</robot>

@@ -1,0 +1,505 @@
+<?xml version="1.0"?>
+<!-- Xacro for Franka Emika Panda arm -->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!--                   -->
+  <!-- Imported elements -->
+  <!--                   -->
+  <xacro:include filename="$(find panda_description)/urdf/panda_utils.xacro"/>
+  
+  <xacro:include filename="$(find panda_moveit_config)/config/panda.ros2_control.xacro"/>
+
+  <xacro:arg name="use_nominal_extrinsics" default="true"/>
+  <xacro:arg name="add_plug" default="false" />
+  <xacro:arg name="use_mesh" default="true" />
+  <xacro:include filename="$(find realsense2_description)/urdf/_d435.urdf.xacro" />
+  
+  <!--            -->
+  <!-- Properties -->
+  <!--            -->
+  <xacro:property name="joint_base_name" value="joint_base"/>
+  <xacro:property name="joint_base_type" value="fixed"/>
+  <xacro:property name="link0_name" value="link0"/>
+  <xacro:property name="link0_mu" value="0.85"/>
+
+  <xacro:property name="joint1_name" value="joint1"/>
+  <xacro:property name="joint1_type" value="revolute"/>
+  <xacro:property name="joint1_origin_xyz" value="0 0 0.333"/>
+  <xacro:property name="joint1_origin_rpy" value="0 0 0"/>
+  <xacro:property name="joint1_axis_xyz" value="0 0 1"/>
+  <xacro:property name="joint1_lower_limit" value="${-166*pi/180}"/>
+  <xacro:property name="joint1_upper_limit" value="${166*pi/180}"/>
+  <xacro:property name="joint1_velocity_limit" value="${150*pi/180}"/>
+  <xacro:property name="joint1_torque_limit" value="87"/>
+  <xacro:property name="joint1_damping" value="21.75"/>
+  <xacro:property name="joint1_friction" value="3.48"/>
+  <xacro:property name="link1_name" value="link1"/>
+  <xacro:property name="link1_mu" value="0.85"/>
+
+  <xacro:property name="joint2_name" value="joint2"/>
+  <xacro:property name="joint2_type" value="revolute"/>
+  <xacro:property name="joint2_origin_xyz" value="0 0 0"/>
+  <xacro:property name="joint2_origin_rpy" value="${-pi/2} 0 0"/>
+  <xacro:property name="joint2_axis_xyz" value="0 0 1"/>
+  <xacro:property name="joint2_lower_limit" value="${-101*pi/180}"/>
+  <xacro:property name="joint2_upper_limit" value="${101*pi/180}"/>
+  <xacro:property name="joint2_velocity_limit" value="${150*pi/180}"/>
+  <xacro:property name="joint2_torque_limit" value="87"/>
+  <xacro:property name="joint2_damping" value="21.75"/>
+  <xacro:property name="joint2_friction" value="3.48"/>
+  <xacro:property name="link2_name" value="link2"/>
+  <xacro:property name="link2_mu" value="0.85"/>
+
+  <xacro:property name="joint3_name" value="joint3"/>
+  <xacro:property name="joint3_type" value="revolute"/>
+  <xacro:property name="joint3_origin_xyz" value="0 -0.316 0"/>
+  <xacro:property name="joint3_origin_rpy" value="${pi/2} 0 0"/>
+  <xacro:property name="joint3_axis_xyz" value="0 0 1"/>
+  <xacro:property name="joint3_lower_limit" value="${-166*pi/180}"/>
+  <xacro:property name="joint3_upper_limit" value="${166*pi/180}"/>
+  <xacro:property name="joint3_velocity_limit" value="${150*pi/180}"/>
+  <xacro:property name="joint3_torque_limit" value="87"/>
+  <xacro:property name="joint3_damping" value="21.75"/>
+  <xacro:property name="joint3_friction" value="3.48"/>
+  <xacro:property name="link3_name" value="link3"/>
+  <xacro:property name="link3_mu" value="0.85"/>
+
+  <xacro:property name="joint4_name" value="joint4"/>
+  <xacro:property name="joint4_type" value="revolute"/>
+  <xacro:property name="joint4_origin_xyz" value="0.0825 0 0"/>
+  <xacro:property name="joint4_origin_rpy" value="${pi/2} 0 0"/>
+  <xacro:property name="joint4_axis_xyz" value="0 0 1"/>
+  <xacro:property name="joint4_lower_limit" value="${-176/180*pi}"/>
+  <xacro:property name="joint4_upper_limit" value="${-4/180*pi}"/>
+  <xacro:property name="joint4_velocity_limit" value="${150*pi/180}"/>
+  <xacro:property name="joint4_torque_limit" value="87"/>
+  <xacro:property name="joint4_damping" value="21.75"/>
+  <xacro:property name="joint4_friction" value="3.48"/>
+  <xacro:property name="link4_name" value="link4"/>
+  <xacro:property name="link4_mu" value="0.85"/>
+
+  <xacro:property name="joint5_name" value="joint5"/>
+  <xacro:property name="joint5_type" value="revolute"/>
+  <xacro:property name="joint5_origin_xyz" value="-0.0825 0.384 0"/>
+  <xacro:property name="joint5_origin_rpy" value="${-pi/2} 0 0"/>
+  <xacro:property name="joint5_axis_xyz" value="0 0 1"/>
+  <xacro:property name="joint5_lower_limit" value="${-166*pi/180}"/>
+  <xacro:property name="joint5_upper_limit" value="${166*pi/180}"/>
+  <xacro:property name="joint5_velocity_limit" value="${pi}"/>
+  <xacro:property name="joint5_torque_limit" value="12"/>
+  <xacro:property name="joint5_damping" value="3.0"/>
+  <xacro:property name="joint5_friction" value="0.48"/>
+  <xacro:property name="link5_name" value="link5"/>
+  <xacro:property name="link5_mu" value="0.85"/>
+
+  <xacro:property name="joint6_name" value="joint6"/>
+  <xacro:property name="joint6_type" value="revolute"/>
+  <xacro:property name="joint6_origin_xyz" value="0 0 0"/>
+  <xacro:property name="joint6_origin_rpy" value="${pi/2} 0 0"/>
+  <xacro:property name="joint6_axis_xyz" value="0 0 1"/>
+  <xacro:property name="joint6_lower_limit" value="${-1/180*pi}"/>
+  <xacro:property name="joint6_upper_limit" value="${215/180*pi}"/>
+  <xacro:property name="joint6_velocity_limit" value="${pi}"/>
+  <xacro:property name="joint6_torque_limit" value="12"/>
+  <xacro:property name="joint6_damping" value="3.0"/>
+  <xacro:property name="joint6_friction" value="0.48"/>
+  <xacro:property name="link6_name" value="link6"/>
+  <xacro:property name="link6_mu" value="0.85"/>
+
+  <xacro:property name="joint7_name" value="joint7"/>
+  <xacro:property name="joint7_type" value="revolute"/>
+  <xacro:property name="joint7_origin_xyz" value="0.088 0 0"/>
+  <xacro:property name="joint7_origin_rpy" value="${pi/2} 0 0"/>
+  <xacro:property name="joint7_axis_xyz" value="0 0 1"/>
+  <xacro:property name="joint7_lower_limit" value="${-166*pi/180}"/>
+  <xacro:property name="joint7_upper_limit" value="${166*pi/180}"/>
+  <xacro:property name="joint7_velocity_limit" value="${pi}"/>
+  <xacro:property name="joint7_torque_limit" value="12"/>
+  <xacro:property name="joint7_damping" value="3.0"/>
+  <xacro:property name="joint7_friction" value="0.48"/>
+  <xacro:property name="link7_name" value="link7"/>
+  <xacro:property name="link7_mu" value="0.85"/>
+
+  <xacro:property name="wrist_flange_name" value="link8"/>
+  <xacro:property name="wrist_flange_origin_xyz" value="0 0 0.107"/>
+  <xacro:property name="wrist_flange_origin_rpy" value="0 0 ${-pi/4}"/>
+
+
+  <!--       -->
+  <!-- Macro -->
+  <!--       -->
+  <xacro:property name="default_origin_xyz" value="0 0 0"/>
+  <xacro:property name="default_origin_rpy" value="0 0 0"/>
+  <xacro:macro name="panda_arm" params="
+    base_parent
+    prefix:=panda_
+    origin_xyz:=${default_origin_xyz}
+    origin_rpy:=${default_origin_rpy}
+    collision:=true
+    safety_limits:=false
+    safety_position_margin:=${1*pi/180}
+    safety_k_position:=100.0
+    safety_k_velocity:=40.0
+    ros2_control:=true
+    ros2_control_plugin:=fake
+    ros2_control_command_interface:=effort
+    gazebo_preserve_fixed_joint:=false
+  ">
+    <!-- Base -->
+    <xacro:panda_joint
+    parent="${base_parent}"
+    child="${prefix}${link0_name}"
+    joint_name="${prefix}${joint_base_name}"
+    joint_type="${joint_base_type}"
+    joint_origin_xyz="${origin_xyz}"
+    joint_origin_rpy="${origin_rpy}"
+    gazebo_preserve_fixed_joint="${gazebo_preserve_fixed_joint}"
+    />
+    <xacro:panda_link
+    link_name="${prefix}${link0_name}"
+    mesh="${link0_mesh}"
+    collision="${collision}"
+    mu="${link0_mu}"
+    />
+
+    <!-- 1 -->
+    <xacro:panda_joint
+    parent="${prefix}${link0_name}"
+    child="${prefix}${link1_name}"
+    joint_name="${prefix}${joint1_name}"
+    joint_type="${joint1_type}"
+    joint_origin_xyz="${joint1_origin_xyz}"
+    joint_origin_rpy="${joint1_origin_rpy}"
+    joint_axis_xyz="${joint1_axis_xyz}"
+    joint_lower_limit="${joint1_lower_limit}"
+    joint_upper_limit="${joint1_upper_limit}"
+    joint_velocity_limit="${joint1_velocity_limit}"
+    joint_torque_limit="${joint1_torque_limit}"
+    joint_damping="${joint1_damping}"
+    joint_friction="${joint1_friction}"
+    safety_limits="${safety_limits}"
+    safety_position_margin="${safety_position_margin}"
+    safety_k_position="${safety_k_position}"
+    safety_k_velocity="${safety_k_velocity}"
+    gazebo_preserve_fixed_joint="${gazebo_preserve_fixed_joint}"
+    />
+    <xacro:panda_link
+    link_name="${prefix}${link1_name}"
+    mesh="${link1_mesh}"
+    collision="${collision}"
+    mu="${link1_mu}"
+    />
+
+    <!-- 2 -->
+    <xacro:panda_joint
+    parent="${prefix}${link1_name}"
+    child="${prefix}${link2_name}"
+    joint_name="${prefix}${joint2_name}"
+    joint_type="${joint2_type}"
+    joint_origin_xyz="${joint2_origin_xyz}"
+    joint_origin_rpy="${joint2_origin_rpy}"
+    joint_axis_xyz="${joint2_axis_xyz}"
+    joint_lower_limit="${joint2_lower_limit}"
+    joint_upper_limit="${joint2_upper_limit}"
+    joint_velocity_limit="${joint2_velocity_limit}"
+    joint_torque_limit="${joint2_torque_limit}"
+    joint_damping="${joint2_damping}"
+    joint_friction="${joint2_friction}"
+    safety_limits="${safety_limits}"
+    safety_position_margin="${safety_position_margin}"
+    safety_k_position="${safety_k_position}"
+    safety_k_velocity="${safety_k_velocity}"
+    gazebo_preserve_fixed_joint="${gazebo_preserve_fixed_joint}"
+    />
+    <xacro:panda_link
+    link_name="${prefix}${link2_name}"
+    mesh="${link2_mesh}"
+    collision="${collision}"
+    mu="${link2_mu}"
+    />
+
+    <!-- 3 -->
+    <xacro:panda_joint
+    parent="${prefix}${link2_name}"
+    child="${prefix}${link3_name}"
+    joint_name="${prefix}${joint3_name}"
+    joint_type="${joint3_type}"
+    joint_origin_xyz="${joint3_origin_xyz}"
+    joint_origin_rpy="${joint3_origin_rpy}"
+    joint_axis_xyz="${joint3_axis_xyz}"
+    joint_lower_limit="${joint3_lower_limit}"
+    joint_upper_limit="${joint3_upper_limit}"
+    joint_velocity_limit="${joint3_velocity_limit}"
+    joint_torque_limit="${joint3_torque_limit}"
+    joint_damping="${joint3_damping}"
+    joint_friction="${joint3_friction}"
+    safety_limits="${safety_limits}"
+    safety_position_margin="${safety_position_margin}"
+    safety_k_position="${safety_k_position}"
+    safety_k_velocity="${safety_k_velocity}"
+    gazebo_preserve_fixed_joint="${gazebo_preserve_fixed_joint}"
+    />
+    <xacro:panda_link
+    link_name="${prefix}${link3_name}"
+    mesh="${link3_mesh}"
+    collision="${collision}"
+    mu="${link3_mu}"
+    />
+
+    <!-- 4 -->
+    <xacro:panda_joint
+    parent="${prefix}${link3_name}"
+    child="${prefix}${link4_name}"
+    joint_name="${prefix}${joint4_name}"
+    joint_type="${joint4_type}"
+    joint_origin_xyz="${joint4_origin_xyz}"
+    joint_origin_rpy="${joint4_origin_rpy}"
+    joint_axis_xyz="${joint4_axis_xyz}"
+    joint_lower_limit="${joint4_lower_limit}"
+    joint_upper_limit="${joint4_upper_limit}"
+    joint_velocity_limit="${joint4_velocity_limit}"
+    joint_torque_limit="${joint4_torque_limit}"
+    joint_damping="${joint4_damping}"
+    joint_friction="${joint4_friction}"
+    safety_limits="${safety_limits}"
+    safety_position_margin="${safety_position_margin}"
+    safety_k_position="${safety_k_position}"
+    safety_k_velocity="${safety_k_velocity}"
+    gazebo_preserve_fixed_joint="${gazebo_preserve_fixed_joint}"
+    />
+    <xacro:panda_link
+    link_name="${prefix}${link4_name}"
+    mesh="${link4_mesh}"
+    collision="${collision}"
+    mu="${link4_mu}"
+    />
+
+    <!-- 5 -->
+    <xacro:panda_joint
+    parent="${prefix}${link4_name}"
+    child="${prefix}${link5_name}"
+    joint_name="${prefix}${joint5_name}"
+    joint_type="${joint5_type}"
+    joint_origin_xyz="${joint5_origin_xyz}"
+    joint_origin_rpy="${joint5_origin_rpy}"
+    joint_axis_xyz="${joint5_axis_xyz}"
+    joint_lower_limit="${joint5_lower_limit}"
+    joint_upper_limit="${joint5_upper_limit}"
+    joint_velocity_limit="${joint5_velocity_limit}"
+    joint_torque_limit="${joint5_torque_limit}"
+    joint_damping="${joint5_damping}"
+    joint_friction="${joint5_friction}"
+    safety_limits="${safety_limits}"
+    safety_position_margin="${safety_position_margin}"
+    safety_k_position="${safety_k_position}"
+    safety_k_velocity="${safety_k_velocity}"
+    gazebo_preserve_fixed_joint="${gazebo_preserve_fixed_joint}"
+    />
+    <xacro:panda_link
+    link_name="${prefix}${link5_name}"
+    mesh="${link5_mesh}"
+    collision="${collision}"
+    mu="${link5_mu}"
+    />
+
+    <!-- 6 -->
+    <xacro:panda_joint
+    parent="${prefix}${link5_name}"
+    child="${prefix}${link6_name}"
+    joint_name="${prefix}${joint6_name}"
+    joint_type="${joint6_type}"
+    joint_origin_xyz="${joint6_origin_xyz}"
+    joint_origin_rpy="${joint6_origin_rpy}"
+    joint_axis_xyz="${joint6_axis_xyz}"
+    joint_lower_limit="${joint6_lower_limit}"
+    joint_upper_limit="${joint6_upper_limit}"
+    joint_velocity_limit="${joint6_velocity_limit}"
+    joint_torque_limit="${joint6_torque_limit}"
+    joint_damping="${joint6_damping}"
+    joint_friction="${joint6_friction}"
+    safety_limits="${safety_limits}"
+    safety_position_margin="${safety_position_margin}"
+    safety_k_position="${safety_k_position}"
+    safety_k_velocity="${safety_k_velocity}"
+    gazebo_preserve_fixed_joint="${gazebo_preserve_fixed_joint}"
+    />
+    <xacro:panda_link
+    link_name="${prefix}${link6_name}"
+    mesh="${link6_mesh}"
+    collision="${collision}"
+    mu="${link6_mu}"
+    />
+
+    <!-- 7 -->
+    <xacro:panda_joint
+    parent="${prefix}${link6_name}"
+    child="${prefix}${link7_name}"
+    joint_name="${prefix}${joint7_name}"
+    joint_type="${joint7_type}"
+    joint_origin_xyz="${joint7_origin_xyz}"
+    joint_origin_rpy="${joint7_origin_rpy}"
+    joint_axis_xyz="${joint7_axis_xyz}"
+    joint_lower_limit="${joint7_lower_limit}"
+    joint_upper_limit="${joint7_upper_limit}"
+    joint_velocity_limit="${joint7_velocity_limit}"
+    joint_torque_limit="${joint7_torque_limit}"
+    joint_damping="${joint7_damping}"
+    joint_friction="${joint7_friction}"
+    safety_limits="${safety_limits}"
+    safety_position_margin="${safety_position_margin}"
+    safety_k_position="${safety_k_position}"
+    safety_k_velocity="${safety_k_velocity}"
+    gazebo_preserve_fixed_joint="${gazebo_preserve_fixed_joint}"
+    />
+    <xacro:panda_link
+    link_name="${prefix}${link7_name}"
+    mesh="${link7_mesh}"
+    collision="${collision}"
+    mu="${link7_mu}"
+    />
+
+    <!-- Wrist flange -->
+    <xacro:panda_virtual_link
+    parent="${prefix}${link7_name}"
+    link_name="${prefix}${wrist_flange_name}"
+    joint_origin_xyz="${wrist_flange_origin_xyz}"
+    joint_origin_rpy="${wrist_flange_origin_rpy}"
+    gazebo_preserve_fixed_joint="${gazebo_preserve_fixed_joint}"
+    />
+
+
+    <xacro:panda_ros2_control name="FakeSystem" initial_positions_file="$(find panda_moveit_config)/config/initial_positions.yaml"/>
+    
+
+    
+    <xacro:sensor_d435 parent="${prefix}${link0_name}" use_nominal_extrinsics="$(arg use_nominal_extrinsics)" add_plug="$(arg add_plug)" use_mesh="$(arg use_mesh)">
+        <origin xyz="0.1 0.0 0.05" rpy="0 0.0 0" />
+    </xacro:sensor_d435>
+
+    <gazebo reference="${prefix}${link0_name}">
+      <sensor name="d435_color" type="camera">
+        <always_on>1</always_on>
+        <update_rate>30</update_rate>
+        <visualize>1</visualize>
+        <pose>0 0.0175 0.0 0 -0 0</pose>
+        <topic>/color_camera</topic>
+        <camera name="d435">
+          <horizontal_fov>1.21126</horizontal_fov>
+          <image>
+            <width>640</width>
+            <height>480</height>
+            <format>RGB_INT8</format>
+          </image>
+          <clip>
+            <near>0.1</near>
+            <far>100</far>
+          </clip>
+          <noise>
+            <type>gaussian</type>
+            <mean>0</mean>
+            <stddev>0.007</stddev>
+          </noise>
+        </camera>
+      </sensor>
+      <sensor name='d435_depth' type='depth_camera'>
+        <always_on>1</always_on>
+        <update_rate>15</update_rate>
+        <visualize>1</visualize>
+        <topic>/depth_camera</topic>
+        <pose>0 0.04 -0.04 0 0 0</pose>
+        <camera name='d435'>
+          <horizontal_fov>1.48702</horizontal_fov>
+          <image>
+            <width>1280</width>
+            <height>720</height>
+          </image>
+          <clip>
+            <near>0.2</near>
+            <far>5</far>
+          </clip>
+          <noise>
+            <type>gaussian</type>
+            <mean>0</mean>
+            <stddev>0.1</stddev>
+          </noise>
+        </camera>
+
+          <plugin filename="libignition-gazebo-sensors-system.so" name="ignition::gazebo::systems::Sensors"> 
+            <render_engine>ogre</render_engine>
+          </plugin>
+      </sensor> 
+    </gazebo>
+
+
+   <ros2_control name="2DofPosition" type="system">
+        <hardware>
+            <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+        </hardware>
+        <joint name="joint1">
+                <command_interface name="position"/>
+                <state_interface name="position">
+                  <param name="initial_value">0.0</param>
+                </state_interface>
+                <state_interface name="velocity"/>
+            </joint>
+            <joint name="joint2">
+                <command_interface name="position"/>
+                <state_interface name="position">
+                  <param name="initial_value">0.0</param>
+                </state_interface>
+                <state_interface name="velocity"/>
+            </joint>
+            <joint name="joint3">
+                <command_interface name="position"/>
+                <state_interface name="position">
+                  <param name="initial_value">0.0</param>
+                </state_interface>
+                <state_interface name="velocity"/>
+            </joint>
+            <joint name="joint4">
+                <command_interface name="position"/>
+                <state_interface name="position">
+                  <param name="initial_value">0.0</param>
+                </state_interface>
+                <state_interface name="velocity"/>
+            </joint>
+            <joint name="joint5">
+                <command_interface name="position"/>
+                <state_interface name="position">
+                  <param name="initial_value">0.0</param>
+                </state_interface>
+                <state_interface name="velocity"/>
+            </joint>
+            <joint name="joint6">
+                <command_interface name="position"/>
+                <state_interface name="position">
+                  <param name="initial_value">0.0</param>
+                </state_interface>
+                <state_interface name="velocity"/>
+            </joint>
+            <joint name="joint7">
+                <command_interface name="position"/>
+                <state_interface name="position">
+                  <param name="initial_value">0.0</param>
+                </state_interface>
+                <state_interface name="velocity"/>
+            </joint>
+            <joint name="finger_joint1">
+                <command_interface name="position"/>
+                <state_interface name="position">
+                  <param name="initial_value">0.0</param>
+                </state_interface>
+                <state_interface name="velocity"/>
+            </joint>
+            <joint name="finger_joint2">
+                <command_interface name="position"/>
+                <state_interface name="position">
+                  <param name="initial_value">0.0</param>
+                </state_interface>
+                <state_interface name="velocity"/>
+            </joint>
+
+        </ros2_control>        
+  </xacro:macro>
+
+</robot>
