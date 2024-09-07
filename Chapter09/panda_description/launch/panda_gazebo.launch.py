@@ -48,11 +48,6 @@ def generate_launch_description():
                  arguments=['-name', 'panda', '-topic', '/robot_description'], output='screen')
 
     
-    #ignition_gazebo_node = IncludeLaunchDescription( PythonLaunchDescriptionSource(
-    #            [PathJoinSubstitution([FindPackageShare('ros_gz_sim'),
-    #                                   'launch',
-    #                                   'gz_sim.launch.py'])]),
-    #                                    launch_arguments=[('gz_args', [' -r -v 4 /home/user/ros2_ws/src/ch11/panda_description/world/planning_world.sdf'])])
     load_joint_state_broadcaster = ExecuteProcess(
         cmd=['ros2', 'control', 'load_controller', '--set-state', 'active',
              'joint_state_broadcaster'],
@@ -76,7 +71,7 @@ def generate_launch_description():
             ])
         ),
         launch_arguments={
-            'gz_args': f'-r -v 4 {sdf_file_path}'
+            'gz_args': f'-r -v 4 empty.sdf' # {sdf_file_path}'
         }.items()
     )
 
