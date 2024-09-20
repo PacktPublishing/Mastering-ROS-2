@@ -39,7 +39,7 @@ def generate_launch_description():
     workspace_path = os.environ.get('COLCON_PREFIX_PATH') or os.environ.get('AMENT_PREFIX_PATH')
     pkg_panda_description = workspace_path + "/panda_description/share"
     ign_resource_path = SetEnvironmentVariable(
-        name='IGN_GAZEBO_RESOURCE_PATH',
+        name='GZ_SIM_RESOURCE_PATH',
         value=[pkg_panda_description]
     )
 

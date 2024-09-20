@@ -6,7 +6,7 @@ int main(int argc, char** argv) {
 
 	rclcpp::init(argc, argv);
 	moveit::planning_interface::MoveGroupInterface::Plan my_plan;
-    auto node = rclcpp::Node::make_shared("JointSpacePlanning");
+        auto node = rclcpp::Node::make_shared("JointSpacePlanning");
 	moveit::planning_interface::MoveGroupInterface move_group(node, "arm");
 	std::vector<double> des_joint_pos = {0.0, 0.0, 0.0, -0.35, 0.0, 1.57, 0.78};
 

@@ -6,9 +6,9 @@
   <!-- Imported elements -->
   <!--                   -->
   <xacro:include filename="$(find panda_description)/urdf/panda_utils.xacro"/>
-  
+  <!--
   <xacro:include filename="$(find panda_moveit_config)/config/panda.ros2_control.xacro"/>
-
+  -->
   <xacro:arg name="use_nominal_extrinsics" default="true"/>
   <xacro:arg name="add_plug" default="false" />
   <xacro:arg name="use_mesh" default="true" />
@@ -367,9 +367,9 @@
     gazebo_preserve_fixed_joint="${gazebo_preserve_fixed_joint}"
     />
 
-
+    <!--
     <xacro:panda_ros2_control name="FakeSystem" initial_positions_file="$(find panda_moveit_config)/config/initial_positions.yaml"/>
-    
+    -->
 
     
     <xacro:sensor_d435 parent="${prefix}${link0_name}" use_nominal_extrinsics="$(arg use_nominal_extrinsics)" add_plug="$(arg add_plug)" use_mesh="$(arg use_mesh)">
@@ -430,7 +430,7 @@
       </sensor> 
     </gazebo>
 
-
+  
    <ros2_control name="2DofPosition" type="system">
         <hardware>
             <plugin>gz_ros2_control/GazeboSimSystem</plugin>
@@ -445,7 +445,7 @@
             <joint name="joint2">
                 <command_interface name="position"/>
                 <state_interface name="position">
-                  <param name="initial_value">0.0</param>
+                  <param name="initial_value">-0.78</param>
                 </state_interface>
                 <state_interface name="velocity"/>
             </joint>
@@ -459,7 +459,7 @@
             <joint name="joint4">
                 <command_interface name="position"/>
                 <state_interface name="position">
-                  <param name="initial_value">0.0</param>
+                  <param name="initial_value">-2.35</param>
                 </state_interface>
                 <state_interface name="velocity"/>
             </joint>
@@ -473,14 +473,14 @@
             <joint name="joint6">
                 <command_interface name="position"/>
                 <state_interface name="position">
-                  <param name="initial_value">0.0</param>
+                  <param name="initial_value">1.57</param>
                 </state_interface>
                 <state_interface name="velocity"/>
             </joint>
             <joint name="joint7">
                 <command_interface name="position"/>
                 <state_interface name="position">
-                  <param name="initial_value">0.0</param>
+                  <param name="initial_value">0.78</param>
                 </state_interface>
                 <state_interface name="velocity"/>
             </joint>
@@ -500,6 +500,7 @@
             </joint>
 
         </ros2_control>        
+  
   </xacro:macro>
-
+  
 </robot>

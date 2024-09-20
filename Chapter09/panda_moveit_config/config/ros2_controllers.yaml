@@ -7,10 +7,6 @@ controller_manager:
       type: joint_trajectory_controller/JointTrajectoryController
 
 
-    eef_controller:
-      type: joint_trajectory_controller/JointTrajectoryController
-
-
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
 
@@ -29,13 +25,4 @@ arm_controller:
     state_interfaces:
       - position
       - velocity
-eef_controller:
-  ros__parameters:
-    joints:
-      - finger_joint1
-      - finger_joint2
-    command_interfaces:
-      - position
-    state_interfaces:
-      - position
-      - velocity
+    allow_nonzero_velocity_at_trajectory_end: true

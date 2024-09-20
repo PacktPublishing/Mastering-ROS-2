@@ -5,6 +5,21 @@ moveit_setup_assistant_config:
   srdf:
     relative_path: config/panda.srdf
   package_settings:
-    author_name: Jonathan Cacace
-    author_email: jonathan.cacace@eurecat.org
-    generated_timestamp: 1725640500
+    author_name: ""
+    author_email: ""
+    generated_timestamp: 1726849714
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
+      - velocity
+  modified_urdf:
+    xacros:
+      - control_xacro
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
+      - velocity
