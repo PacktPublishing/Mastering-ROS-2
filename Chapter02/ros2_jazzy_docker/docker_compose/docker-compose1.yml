@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  talker:
+    image: osrf/ros:jazzy-desktop-full
+    container_name: ros2_talker
+    command: /bin/bash -c "apt update && apt install ros-jazzy-rmw-cyclonedds-cpp -y && source /opt/ros/jazzy/setup.bash && export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp && ros2 run demo_nodes_cpp talker"
+    environment:
+      - ROS_DOMAIN_ID=0
+    network_mode: "host"
+
+  listener:
+    image: osrf/ros:jazzy-desktop-full
+    container_name: ros2_listener
+    command: /bin/bash -c "apt update && apt install ros-jazzy-rmw-cyclonedds-cpp -y && source /opt/ros/jazzy/setup.bash && export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp && ros2 run demo_nodes_cpp listener"
+    environment:
+      - ROS_DOMAIN_ID=0
+    network_mode: "host"
+

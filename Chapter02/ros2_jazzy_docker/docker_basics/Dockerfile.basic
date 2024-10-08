@@ -1,0 +1,37 @@
+#Base Image
+FROM osrf/ros:jazzy-desktop-full
+
+#User name to be created
+ARG USERNAME=robot
+
+ARG USER_UID=1000
+ARG USER_GID=1000
+
+# Delete user if it exists in container (Ubuntu Noble: ubuntu)
+RUN if id -u $USER_UID ; then userdel `id -un $USER_UID` ; fi
+
+# Create the user
+RUN groupadd --gid $USER_GID $USERNAME \
+    && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
+    #
+    # [Optional] Add sudo support. Omit if you don't need to install software after connecting.
+    && apt update \
+    && apt install -y sudo \
+    && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
+    && chmod 0440 /etc/sudoers.d/$USERNAME
+
+
+#Update and upgrade Ubuntu package and install pip
+RUN apt update && apt upgrade -y
+RUN apt install -y python3-pip
+
+#Set defaul shell as bash
+ENV SHELL=/bin/bash
+
+
+# Set to default user.
+USER $USERNAME
+
+#Execute bash shell when start the container
+CMD ["/bin/bash"]
+

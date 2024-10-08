@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  talker:
+    image: osrf/ros:jazzy-desktop-full
+    command: ros2 run demo_nodes_cpp talker
+
+  listener:
+    image: osrf/ros:jazzy-desktop-full
+    command: ros2 run demo_nodes_cpp listener
+    depends_on:
+      - talker
