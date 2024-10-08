@@ -72,10 +72,8 @@ echo ">>> {Installing curl for adding keys}"
 #else
 #    echo "Curl is not installed,Installing Curl"
 
-
 sudo apt update 
 sudo apt install -y curl openssl
-
 
 #fi
 
