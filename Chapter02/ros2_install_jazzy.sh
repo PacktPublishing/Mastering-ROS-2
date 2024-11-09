@@ -116,13 +116,13 @@ read -p "Enter your install (Default is 1):" answer
 
 case "$answer" in
   1)
-    package_type="desktop"
+    package_type="desktop-full"
     ;;
   2)
     package_type="ros-base"
     ;;    
   * )
-    package_type="desktop"
+    package_type="desktop-full"
     ;;
 esac
 echo "#######################################################################################################################"
