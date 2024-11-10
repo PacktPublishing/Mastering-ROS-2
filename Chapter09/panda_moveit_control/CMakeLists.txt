@@ -12,7 +12,6 @@ find_package(moveit REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(moveit_msgs REQUIRED)
 find_package( moveit_ros_planning_interface  REQUIRED )
-find_package( graph_msgs  REQUIRED )
 
 
 

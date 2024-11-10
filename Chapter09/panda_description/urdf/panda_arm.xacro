@@ -424,11 +424,11 @@
           </noise>
         </camera>
 
-          <plugin filename="libignition-gazebo-sensors-system.so" name="ignition::gazebo::systems::Sensors"> 
+          <plugin filename="libgz-sim-sensors-system.so" name="gz::sim::systems::Sensors"> 
             <render_engine>ogre</render_engine>
           </plugin>
       </sensor> 
-    </gazebo>
+      </gazebo>
 
   
    <ros2_control name="2DofPosition" type="system">
