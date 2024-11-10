@@ -9,6 +9,13 @@
 using namespace std::chrono_literals;
 using Action = bt_action_server::action::ReachLocation;
 
+enum class ActionResult : uint8_t {  
+    ActionNotCompleted,
+    ActionFailed,
+    ActionCancelled,
+    ActionSucceded
+};
+
 class WaitForServer : public BT::StatefulActionNode {
   public:
     WaitForServer(const std::string & action_name, const BT::NodeConfig & conf) : 
@@ -20,13 +27,13 @@ class WaitForServer : public BT::StatefulActionNode {
         std::string server_name;
         getInput<std::string>("server_name", server_name );
 
-        _client = rclcpp_action::create_client<Action>(_node, server_name);
+        client_ = rclcpp_action::create_client<Action>(_node, server_name);
         return BT::NodeStatus::RUNNING;
     }
   
     BT::NodeStatus onRunning() {   
       
-        if (!_client->action_server_is_ready()) {
+        if (!client_->action_server_is_ready()) {
             std::cout << "[Node WaitForServer]: Failure"<<std::endl;
             return BT::NodeStatus::FAILURE;
         }
@@ -47,7 +54,7 @@ class WaitForServer : public BT::StatefulActionNode {
 
     private:
       rclcpp::Node::SharedPtr _node;
-      rclcpp_action::Client<Action>::SharedPtr _client;
+      rclcpp_action::Client<Action>::SharedPtr client_;
 };
 
 
@@ -55,19 +62,19 @@ class CallAction : public BT::StatefulActionNode {
   public:
     CallAction(const std::string & action_name, const BT::NodeConfig & conf) : 
       BT::StatefulActionNode(action_name, conf) {    
-        _node2 = rclcpp::Node::make_shared("action_client_node");
+        node2_ = rclcpp::Node::make_shared("action_client_node");
     }
  
     BT::NodeStatus onStart() {
         std::string server_name;
         getInput<std::string>("server_name", server_name );
-        getInput<float>("x", _x );
-        getInput<float>("y", _y );
-        getInput<float>("timeout", _timeout );
-        _action_result = -1;
-        _server_called = false;
+        getInput<float>("x", x_ );
+        getInput<float>("y", y_ );
+        getInput<float>("timeout", timeout_ );
+        action_result_ = ActionResult::ActionNotCompleted; 
+        server_called_ = false;
 
-        _client = rclcpp_action::create_client<Action>(_node2, server_name);
+        client_ = rclcpp_action::create_client<Action>(node2_, server_name);
         return BT::NodeStatus::RUNNING;
     }
     void result_callback(const rclcpp_action::ClientGoalHandle<Action>::WrappedResult & result) {
@@ -75,13 +82,13 @@ class CallAction : public BT::StatefulActionNode {
         
         switch (result.code) {
             case rclcpp_action::ResultCode::SUCCEEDED:
-                _action_result = 2;
+                action_result_ = ActionResult::ActionSucceded;
                 break;
             case rclcpp_action::ResultCode::ABORTED:
-                _action_result = 1;
+                action_result_ = ActionResult::ActionFailed;
                 break;
             case rclcpp_action::ResultCode::CANCELED:
-                _action_result = 0;
+                action_result_ = ActionResult::ActionCancelled;
                 break;
             default:
                 break;
@@ -89,15 +96,15 @@ class CallAction : public BT::StatefulActionNode {
     }
     BT::NodeStatus onRunning() {   
 
-        if ( !_server_called ) {
-            _server_called = true;
+        if ( !server_called_ ) {
+            server_called_ = true;
             auto goal = Action::Goal();
-            goal.x = _x;
-            goal.y = _y;
-            goal.timeout = _timeout;
-            auto send_goal_future = _client->async_send_goal(goal);
+            goal.x = x_;
+            goal.y = y_;
+            goal.timeout = timeout_;
+            auto send_goal_future = client_->async_send_goal(goal);
             
-            if (rclcpp::spin_until_future_complete(_node2, send_goal_future) !=
+            if (rclcpp::spin_until_future_complete(node2_, send_goal_future) !=
                 rclcpp::FutureReturnCode::SUCCESS) {
                     std::cout << "Failed to send goal" <<std::endl;
                     return BT::NodeStatus::FAILURE;
@@ -108,22 +115,22 @@ class CallAction : public BT::StatefulActionNode {
                 std::cout << "Goal was rejected by server" << std::endl;
                 return BT::NodeStatus::FAILURE;
             }
-            _client->async_get_result(goal_handle, std::bind(&CallAction::result_callback, this, std::placeholders::_1));
+            client_->async_get_result(goal_handle, std::bind(&CallAction::result_callback, this, std::placeholders::_1));
            
 
         }
 
-        rclcpp::spin_some( _node2 );
+        rclcpp::spin_some( node2_ );
 
-        if( _action_result == 2 ) {
+        if( action_result_ ==  ActionResult::ActionSucceded ) {
             std::cout << "[Node CallAction]: Success" << std::endl;
             return BT::NodeStatus::SUCCESS;
         }
-        else if( _action_result == 1 ) {
+        else if( action_result_ == ActionResult::ActionFailed ) {
             std::cout << "[Node CallAction]: Failure" << std::endl;
             return BT::NodeStatus::FAILURE;
         }
-        else if( _action_result == 0 ) {
+        else if( action_result_ == ActionResult::ActionCancelled) {
             std::cout << "[Node CallAction]: Failure" << std::endl;
             return BT::NodeStatus::FAILURE;
         }
@@ -144,11 +151,11 @@ class CallAction : public BT::StatefulActionNode {
     }
 
     private:
-        rclcpp::Node::SharedPtr _node2;
-        rclcpp_action::Client<Action>::SharedPtr _client;
-        float _x, _y, _timeout;
-        bool _server_called;
-        int _action_result;
+        rclcpp::Node::SharedPtr node2_;
+        rclcpp_action::Client<Action>::SharedPtr client_;
+        float x_, y_, timeout_;
+        bool server_called_;
+        ActionResult action_result_;
 };
 
 
@@ -156,9 +163,9 @@ class BTExecutor : public rclcpp::Node {
   public:
     BTExecutor()
     : Node("bt_executor") {
-      _first = true;
+      first_ = true;
       timer_ = this->create_wall_timer( 0.5s, std::bind(&BTExecutor::tick_function, this));
-      _blackboard = BT::Blackboard::create();
+      blackboard_ = BT::Blackboard::create();
 
     }
 
@@ -166,29 +173,29 @@ class BTExecutor : public rclcpp::Node {
 
     void init_btree() {
       
-        _blackboard->set<rclcpp::Node::SharedPtr>("node", this->shared_from_this());
-        _factory.registerNodeType<WaitForServer>("WaitForServer");
-        _factory.registerNodeType<CallAction>("CallAction");
+        blackboard_->set<rclcpp::Node::SharedPtr>("node", this->shared_from_this());
+        factory_.registerNodeType<WaitForServer>("WaitForServer");
+        factory_.registerNodeType<CallAction>("CallAction");
         this->declare_parameter<std::string>("tree_xml_file", "");
         std::string tree_file;
         this->get_parameter("tree_xml_file", tree_file);
-        _tree = _factory.createTreeFromFile(tree_file, _blackboard);
+        tree_ = factory_.createTreeFromFile(tree_file, blackboard_);
         
     }
 
     void tick_function() {
-      if( _first) {
+      if( first_) {
           init_btree();
-          _first = false;
+          first_ = false;
       } 
-      _tree.tickOnce();
+      tree_.tickOnce();
     }
     
-    BT::Tree _tree;
-    BT::Blackboard::Ptr _blackboard;
-    BT::BehaviorTreeFactory _factory;
+    BT::Tree tree_;
+    BT::Blackboard::Ptr blackboard_;
+    BT::BehaviorTreeFactory factory_;
     rclcpp::TimerBase::SharedPtr timer_;
-    bool _first;
+    bool first_;
 };
 
  

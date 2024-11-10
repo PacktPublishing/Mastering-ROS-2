@@ -27,28 +27,29 @@ include_directories(include)
 # Define the executable for the action server
 add_executable(reach_location_server src/reach_location_server.cpp)
 ament_target_dependencies(reach_location_server rclcpp rclcpp_action std_msgs geometry_msgs )
-rosidl_target_interfaces(reach_location_server ${PROJECT_NAME} "rosidl_typesupport_cpp")
+rosidl_get_typesupport_target(cpp_typesupport_target "${PROJECT_NAME}" "rosidl_typesupport_cpp")
+target_link_libraries(reach_location_server "${cpp_typesupport_target}") 
 
 # Define the executable for the action client
 add_executable(reach_location_client src/reach_location_client.cpp)
 ament_target_dependencies(reach_location_client rclcpp rclcpp_action  std_msgs geometry_msgs )
-rosidl_target_interfaces(reach_location_client ${PROJECT_NAME} "rosidl_typesupport_cpp")
+rosidl_get_typesupport_target(cpp_typesupport_target "${PROJECT_NAME}" "rosidl_typesupport_cpp")
+target_link_libraries(reach_location_client "${cpp_typesupport_target}") 
 
 
 # Install the executables
 install(TARGETS 
   reach_location_server DESTINATION lib/${PROJECT_NAME})
 
-
-
 # Install the executables
 install(TARGETS 
-  reach_location_client DESTINATION lib/${PROJECT_NAME})
+ reach_location_client DESTINATION lib/${PROJECT_NAME})
 
 
 add_executable( bt_action src/bt_action.cpp ) 
 ament_target_dependencies(bt_action rclcpp rclcpp_action std_msgs geometry_msgs behaviortree_cpp )
-rosidl_target_interfaces(bt_action ${PROJECT_NAME} "rosidl_typesupport_cpp")
+rosidl_get_typesupport_target(cpp_typesupport_target "${PROJECT_NAME}" "rosidl_typesupport_cpp")
+target_link_libraries(bt_action "${cpp_typesupport_target}") 
 
 
 # Install the executables
