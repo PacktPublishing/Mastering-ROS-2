@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root BTCPP_format="4">
-  <BehaviorTree ID="sequnce">
+  <BehaviorTree ID="sequence">
     <Sequence>
       <HelloNode1 msg="Hello from Node1"/>
       <HelloNode2 msg="Hello from Node2"/>

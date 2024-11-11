@@ -71,7 +71,7 @@ def generate_launch_description():
             ])
         ),
         launch_arguments={
-            'gz_args': f'-r -v 4 empty.sdf' # {sdf_file_path}'
+            'gz_args': f'-r -v 4 {sdf_file_path}'
         }.items()
     )
 

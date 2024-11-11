@@ -117,6 +117,7 @@ void PlanningWithObstacles::setup_world() {
     obstacle.operation = obstacle.ADD;
     planning_scene_interface.applyCollisionObject(obstacle);
 
+    
     moveit_msgs::msg::CollisionObject grasping_object;
     grasping_object.id = "grasp";
     shape_msgs::msg::SolidPrimitive grasping_object_primitive;
@@ -127,7 +128,7 @@ void PlanningWithObstacles::setup_world() {
     grasping_object.header.frame_id = _move_group->getEndEffectorLink();
     geometry_msgs::msg::Pose grab_pose;
     grab_pose.orientation.w = 1.0;
-    grab_pose.position.z = 0.08;
+    grab_pose.position.z = 0.28;
     grasping_object.primitives.push_back(grasping_object_primitive);
     grasping_object.primitive_poses.push_back(grab_pose);
     grasping_object.operation = grasping_object.ADD;
@@ -140,90 +141,3 @@ void PlanningWithObstacles::setup_world() {
 
 
 }
-
-
-/*
-int main(int argc, char** argv) {
-    
-    bool success = false;
-    rclcpp::init(argc, argv);s
-    rclcpp::NodeOptions node_options;
-    node_options.automatically_declare_parameters_from_overrides(true);
-    auto move_group_node = rclcpp::Node::make_shared("move_group_interface_tutorial", node_options);
-    rclcpp::executors::SingleThreadedExecutor executor;
-    executor.add_node(move_group_node);
-    std::thread([&executor]() { executor.spin(); }).detach();
-    moveit::planning_interface::MoveGroupInterface move_group(move_group_node, "arm");
-    const moveit::core::JointModelGroup* joint_model_group =
-    move_group.getCurrentState()->getJointModelGroup("arm");
-
-    moveit::planning_interface::MoveGroupInterface::Plan my_plan;
-    moveit::core::RobotStatePtr current_state = move_group.getCurrentState(10);
-    std::vector<double> joint_group_positions;
-    current_state->copyJointGroupPositions(joint_model_group, joint_group_positions);
-
-    moveit::planning_interface::PlanningSceneInterface planning_scene_interface; 
-    move_group.setStartState(*move_group.getCurrentState());
-    geometry_msgs::msg::Pose another_pose;
-    another_pose.orientation.w = 0;
-    another_pose.orientation.x = -1.0;
-    another_pose.position.x = 0.7;
-    another_pose.position.y = 0.0;
-    another_pose.position.z = 0.59;
-    move_group.setPoseTarget(another_pose);
-
-    moveit_msgs::msg::CollisionObject box;
-    box.header.frame_id = move_group.getPlanningFrame();
-    box.id = "box_obstacle";
-    shape_msgs::msg::SolidPrimitive primitive;
-    primitive.type = primitive.BOX;
-    primitive.dimensions.resize(3);
-    primitive.dimensions[primitive.BOX_X] = 0.1;
-    primitive.dimensions[primitive.BOX_Y] = 1.5;
-    primitive.dimensions[primitive.BOX_Z] = 0.3;
-
-    geometry_msgs::msg::Pose bp;
-    bp.orientation.w = 1.0;
-    bp.position.x = 0.48;
-    bp.position.y = 0.0;
-    bp.position.z = 0.25;
-
-    box.primitives.push_back(primitive);
-    box.primitive_poses.push_back(bp);
-    box.operation = box.ADD;
-    planning_scene_interface.applyCollisionObject(box);
-
-
-    moveit_msgs::msg::CollisionObject grasping_object;
-    grasping_object.id = "cylinder1";
-    shape_msgs::msg::SolidPrimitive grasping_object_primitive;
-    grasping_object_primitive.type = primitive.CYLINDER;
-    grasping_object_primitive.dimensions.resize(2);
-    grasping_object_primitive.dimensions[primitive.CYLINDER_HEIGHT] = 0.1;
-    grasping_object_primitive.dimensions[primitive.CYLINDER_RADIUS] = 0.04;
-    grasping_object.header.frame_id = move_group.getEndEffectorLink();
-    geometry_msgs::msg::Pose grab_pose;
-    grab_pose.orientation.w = 1.0;
-    grab_pose.position.z = 0.08;
-    grasping_object.primitives.push_back(grasping_object_primitive);
-    grasping_object.primitive_poses.push_back(grab_pose);
-    grasping_object.operation = grasping_object.ADD;
-    planning_scene_interface.applyCollisionObject(grasping_object);
-    std::vector<std::string> connection_links;
-    
-    connection_links.push_back ( "panda_rightfinger" );
-    connection_links.push_back ( "panda_leftfinger" );
-    move_group.attachObject(grasping_object.id, "hand", connection_links);
-    move_group.setStartStateToCurrentState();
-    success = (move_group.plan(my_plan) == moveit::core::MoveItErrorCode::SUCCESS);
-    move_group.move(); 
-    
-    sleep(10);
-    move_group.detachObject(grasping_object.id);
-
-    std::vector<std::string> object_ids;
-    object_ids.push_back(box.id);
-    object_ids.push_back(grasping_object.id);
-    planning_scene_interface.removeCollisionObjects(object_ids);  
-}
-*/

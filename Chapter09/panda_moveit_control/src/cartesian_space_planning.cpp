@@ -4,7 +4,7 @@
 #include "tf2/exceptions.h"
 #include "tf2_ros/transform_listener.h"
 #include "tf2_ros/buffer.h"
-#include "boost/thread.hpp"
+
 
 class CartesianPlanning : public rclcpp::Node
 {
@@ -53,18 +53,22 @@ void CartesianPlanning::plan() {
     target_pose.position.x -= 0.2;
     waypoints.push_back(target_pose);  
 
-    moveit_msgs::msg::RobotTrajectory trajectory;
-    const double jump_threshold = 0.0;
-    const double eef_step = 0.01;
-    double fraction = move_group.computeCartesianPath(waypoints, eef_step, jump_threshold, trajectory);
-    move_group.execute(trajectory); 
+    moveit_msgs::msg::RobotTrajectory traj;
+    const double jump_th = 0.0;
+    const double step = 0.01;
+    double fraction = move_group.computeCartesianPath(waypoints, step, jump_th, traj);
+    if( fraction > -1 )
+        move_group.execute(traj); 
+    else 
+        RCLCPP_ERROR(rclcpp::get_logger("moveit_executor"), "Trajectory calculation failed");
+
 }
 
 
 void CartesianPlanning::run() {
     auto node = rclcpp::Node::make_shared("CartesianPlan");
     _node = node;
-    boost::thread cartesian_plan_t( &CartesianPlanning::plan, this);
+    std::thread cartesian_plan_t( &CartesianPlanning::plan, this);
     rclcpp::spin(node);
 }
 

@@ -12,13 +12,13 @@ class PublishResult : public BT::StatefulActionNode {
   public:
     PublishResult(const std::string & action_name, const BT::NodeConfig & conf) : 
       BT::StatefulActionNode(action_name, conf) {    
-        _node = conf.blackboard->get<rclcpp::Node::SharedPtr>("node");
+        node_ = conf.blackboard->get<rclcpp::Node::SharedPtr>("node");
     }
  
     BT::NodeStatus onStart() {
       std::string topic_name;
       getInput<std::string>("topic_name", topic_name );
-      _pub = _node->create_publisher<std_msgs::msg::Int32>(topic_name, 1);
+      pub_ = node_->create_publisher<std_msgs::msg::Int32>(topic_name, 1);
       return BT::NodeStatus::RUNNING;
     }
   
@@ -27,7 +27,7 @@ class PublishResult : public BT::StatefulActionNode {
       getInput<int>("generated_number", value );
       std_msgs::msg::Int32 v;
       v.data = value;
-      _pub->publish( v );
+      pub_->publish( v );
       return BT::NodeStatus::SUCCESS;
     }
 
@@ -41,8 +41,8 @@ class PublishResult : public BT::StatefulActionNode {
     }
 
     private:
-      rclcpp::Node::SharedPtr _node;
-      rclcpp::Publisher<std_msgs::msg::Int32>::SharedPtr _pub;
+      rclcpp::Node::SharedPtr node_;
+      rclcpp::Publisher<std_msgs::msg::Int32>::SharedPtr pub_;
 
 };
 
@@ -54,7 +54,10 @@ class NumberChecker : public BT::StatefulActionNode {
     }
  
     BT::NodeStatus onStart() {
-        getInput<int>("check_value", _num_threshold );
+        getInput<int>("check_value", num_threshold_ );
+        
+        std::cout << "Check value: " << num_threshold_ << std::endl;
+
         return BT::NodeStatus::RUNNING;
     }
 
@@ -64,8 +67,8 @@ class NumberChecker : public BT::StatefulActionNode {
         std::uniform_int_distribution<> distrib(1, 100); // For an integer between 1 and 100
         int random_number = distrib(gen);
 
-        std::cout << "Generated number: " << random_number << " - Threshold: " << _num_threshold << " - ";
-        if( random_number < _num_threshold) {
+        std::cout << "Generated number: " << random_number << " - Threshold: " << num_threshold_ << " - ";
+        if( random_number < num_threshold_) {
           setOutput("generated_number", random_number);
           std::cout << "Success! " << std::endl;
           return BT::NodeStatus::SUCCESS;
@@ -81,13 +84,13 @@ class NumberChecker : public BT::StatefulActionNode {
 
     static BT::PortsList providedPorts() {
       return {
-        BT::InputPort<std::string>("check_value"),
+        BT::InputPort<int>("check_value"),
         BT::OutputPort<int>("generated_number")
       };
     }
 
     private:
-        int _num_threshold;
+        int num_threshold_;
 };
 
  
@@ -96,9 +99,9 @@ class BTExecutor : public rclcpp::Node {
   public:
     BTExecutor()
     : Node("bt_executor") {
-      first = true;
+      first_ = true;
       timer_ = this->create_wall_timer( 0.5s, std::bind(&BTExecutor::tick_function, this));
-      _blackboard = BT::Blackboard::create();
+      blackboard_ = BT::Blackboard::create();
 
     }
 
@@ -106,35 +109,35 @@ class BTExecutor : public rclcpp::Node {
 
     void init_btree() {
       
-        _blackboard->set<rclcpp::Node::SharedPtr>("node", this->shared_from_this());
+        //blackboard_->set<rclcpp::Node::SharedPtr>("node", this->shared_from_this());
         
-        _factory.registerNodeType<NumberChecker>("CheckNumber1");
-        _factory.registerNodeType<NumberChecker>("CheckNumber2");
-        _factory.registerNodeType<NumberChecker>("CheckNumber3");
-        _factory.registerNodeType<PublishResult>("PublishResult");
+        factory_.registerNodeType<NumberChecker>("CheckNumber1");
+        factory_.registerNodeType<NumberChecker>("CheckNumber2");
+        factory_.registerNodeType<NumberChecker>("CheckNumber3");
+        factory_.registerNodeType<PublishResult>("PublishResult");
 
         this->declare_parameter<std::string>("tree_xml_file", "");
         std::string tree_file;
         this->get_parameter("tree_xml_file", tree_file);
-        _tree = _factory.createTreeFromFile(tree_file, _blackboard);
+        tree_ = factory_.createTreeFromFile(tree_file, blackboard_);
 
     }
 
     void tick_function() {
-      if( first) {
+      if( first_ ) {
           init_btree();
-          first = false;
+          first_ = false;
       } 
 
-      _tree.tickOnce();
+      tree_.tickOnce();
 
     }
     
     rclcpp::TimerBase::SharedPtr timer_;
-    BT::Blackboard::Ptr _blackboard;
-    BT::Tree _tree;
-    BT::BehaviorTreeFactory _factory;
-    bool first;
+    BT::Blackboard::Ptr blackboard_;
+    BT::Tree tree_;
+    BT::BehaviorTreeFactory factory_;
+    bool first_;
 
 
 };

@@ -1,8 +1,8 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
-#include "behaviortree_cpp/behavior_tree.h"
 #include "behaviortree_cpp/bt_factory.h"
+#include "behaviortree_cpp/behavior_tree.h"
 
 using namespace std::chrono_literals;
 
@@ -12,12 +12,13 @@ class HelloNode : public BT::StatefulActionNode {
     }
  
     BT::NodeStatus onStart() {
-        getInput<std::string>("msg", _hello_msg );
+        getInput<std::string>("msg", hello_msg_ );
+        
         return BT::NodeStatus::RUNNING;
     }
 
     BT::NodeStatus onRunning() {
-        std::cout << _hello_msg << std::endl;
+        std::cout << hello_msg_ << std::endl;
         return BT::NodeStatus::SUCCESS;
     }
 
@@ -30,7 +31,7 @@ class HelloNode : public BT::StatefulActionNode {
     }
 
     private:        
-        std::string _hello_msg;
+        std::string hello_msg_;
 };
 
  
@@ -51,16 +52,16 @@ class BTExecutor : public rclcpp::Node {
         this->declare_parameter<std::string>("tree_xml_file", "");
         std::string tree_file;
         this->get_parameter("tree_xml_file", tree_file);
-        _tree = factory_.createTreeFromFile(tree_file);
+        tree_ = factory_.createTreeFromFile(tree_file);
 
     }
 
     void tick_function() {
-        _tree.tickOnce();
+        tree_.tickOnce();
     }
     
     rclcpp::TimerBase::SharedPtr timer_;
-    BT::Tree _tree;
+    BT::Tree tree_;
     BT::BehaviorTreeFactory factory_;
 };
 
