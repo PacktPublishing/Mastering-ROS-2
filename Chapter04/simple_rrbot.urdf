@@ -1,0 +1,108 @@
+<?xml version="1.0" ?>
+
+<robot name="rrbot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+ 
+  
+  <material name="RRBOT/black">
+    <color rgba="0.0 0.0 0.0 1.0"/>
+  </material>
+  <material name="RRBOT/orange">
+    <color rgba="1.0 0.423529411765 0.0392156862745 1.0"/>
+  </material>
+  <material name="RRBOT/red">
+    <color rgba="0.8 0.0 0.0 1.0"/>
+  </material>
+
+  
+  <!-- Build your comprehensive robot -->
+  <link name="world"/>
+
+  <joint name="single_rrbot_fixed" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <parent link="world"/>
+    <child link="single_rrbot_link1"/>
+  </joint>
+  
+  
+  <link name="single_rrbot_link1">
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 1.0"/>
+      <geometry>
+        <box size="0.1 0.1 1"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 1.0"/>
+      <geometry>
+        <box size="0.1 0.1 2"/>
+      </geometry>
+      <material name="RRBOT/orange"/>
+    </visual>
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 1.0"/>
+      <mass value="1"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+  </link>
+  
+  
+  <joint name="single_rrbot_joint1" type="continuous">
+    <parent link="single_rrbot_link1"/>
+    <child link="single_rrbot_link2"/>
+    <origin rpy="0 0 0" xyz="0 0.1 1.95"/>
+    <axis xyz="0 1 0"/>
+    <dynamics damping="0.7"/>
+  </joint>  
+
+  <link name="single_rrbot_link2">
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0.45"/>
+      <geometry>
+        <box size="0.1 0.1 1"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0.45"/>
+      <geometry>
+        <box size="0.1 0.1 1"/>
+      </geometry>
+      <material name="RRBOT/black"/>
+    </visual>
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0.45"/>
+      <mass value="1"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+  </link>
+  
+
+  <joint name="single_rrbot_joint2" type="continuous">
+    <parent link="single_rrbot_link2"/>
+    <child link="single_rrbot_link3"/>
+    <origin rpy="0 0 0" xyz="0 0.1 0.9"/>
+    <axis xyz="0 1 0"/>
+    <dynamics damping="0.7"/>
+  </joint>
+
+  <link name="single_rrbot_link3">
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0.45"/>
+      <geometry>
+        <box size="0.1 0.1 1"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0.45"/>
+      <geometry>
+        <box size="0.1 0.1 1"/>
+      </geometry>
+      <material name="RRBOT/orange"/>
+    </visual>
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0.45"/>
+      <mass value="1"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+  </link>
+
+</robot>

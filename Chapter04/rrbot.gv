@@ -1,0 +1,14 @@
+digraph G {
+node [shape=box];
+"world" [label="world"];
+"single_rrbot_link1" [label="single_rrbot_link1"];
+"single_rrbot_link2" [label="single_rrbot_link2"];
+"single_rrbot_link3" [label="single_rrbot_link3"];
+node [shape=ellipse, color=blue, fontcolor=blue];
+"world" -> "single_rrbot_fixed" [label="xyz: 0 0 0 \nrpy: 0 -0 0"]
+"single_rrbot_fixed" -> "single_rrbot_link1"
+"single_rrbot_link1" -> "single_rrbot_joint1" [label="xyz: 0 0.1 1.95 \nrpy: 0 -0 0"]
+"single_rrbot_joint1" -> "single_rrbot_link2"
+"single_rrbot_link2" -> "single_rrbot_joint2" [label="xyz: 0 0.1 0.9 \nrpy: 0 -0 0"]
+"single_rrbot_joint2" -> "single_rrbot_link3"
+}
