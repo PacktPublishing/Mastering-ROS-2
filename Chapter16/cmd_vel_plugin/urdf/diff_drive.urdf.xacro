@@ -1,0 +1,149 @@
+<?xml version="1.0"?>
+
+<robot name="diff_robot" xmlns:xacro="http://ros.org/wiki/xacro">
+<xacro:include filename="$(find cmd_vel_plugin)/urdf/diff_drive_macro.xacro" /> 
+
+    <xacro:property name="base_radius" value="0.15" /> 
+    <xacro:property name="passive_wheel_height" value="0.04" /> 
+    <xacro:property name="passive_wheel_radius" value="0.025" /> 
+    <xacro:property name="passive_wheel_mass" value="0.5" /> 
+    <xacro:property name="wheel_radius" value="0.039" /> 
+    <xacro:property name="wheel_height" value="0.02" />
+    <xacro:property name="wheel_mass" value="2.5" /> 
+
+
+	<link name="base_link">
+		<inertial>
+				<inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+			<mass value="5" />
+			<origin xyz="0 0 0" />
+			<cylinder_inertia  m="5" r="${base_radius}" h="0.02" />
+		</inertial>    
+		<visual>
+			<origin xyz="0 0 0" rpy="0 0 0" />
+			<geometry>
+				<cylinder length="0.02" radius="${base_radius}" />
+			</geometry>
+			<material name="White" />
+		</visual>  
+		<collision>
+			<origin xyz="0 0 0" rpy="0 0 0 " />
+			<geometry>
+				<cylinder length="0.02" radius="${base_radius}" />
+			</geometry>
+		</collision>     
+	</link>
+	
+	<xacro:passive_wheel_joint name="passive_wheel_front_joint"
+		parent="base_link"
+		child="passive_wheel_front_link">
+		<origin xyz="0.115 0.0 0.007" rpy="${-M_PI/2} 0 0"/>
+	</xacro:passive_wheel_joint>
+
+	<xacro:passive_wheel_link name="passive_wheel_front_link">
+			<origin xyz="0 0.02 0" rpy="${M_PI/2} 0 0" />
+	</xacro:passive_wheel_link>
+	
+	<xacro:passive_wheel_joint 
+		name="passive_wheel_back_joint"
+		parent="base_link"
+		child="passive_wheel_back_link">
+		<origin xyz="-0.135 0.0 0.009" rpy="${-M_PI/2} 0 0"/>
+	</xacro:passive_wheel_joint>
+	
+	<xacro:passive_wheel_link
+		name="passive_wheel_back_link">
+			<origin xyz="0.02 0.02 0 " rpy="${M_PI/2} 0 0" /> 
+	</xacro:passive_wheel_link>
+
+	<xacro:wheel side="right" parent="base_link" translateX="0" translateY="-${base_radius}" />
+	<xacro:wheel side="left" parent="base_link" translateX="0" translateY="${base_radius}" />
+
+
+	<link name="lidar_link">
+		 <visual>
+      <origin xyz="0 0 0.05" rpy="0 0 0"/>
+      <geometry>
+			<box size="0.05 0.05 0.05" />
+      </geometry>
+    </visual>
+
+    <collision>
+      <origin xyz="0 0 0.05" rpy="0 0 0"/>
+      <geometry>
+			<box size="0.05 0.05 0.05" />
+      </geometry>
+    </collision>
+
+    <inertial>
+      <origin xyz="0 0 0.05" rpy="0 0 0"/>
+      <mass value="1"/>
+      <inertia
+        ixx="1.0" ixy="0.0" ixz="0.0"
+        iyy="1.0" iyz="0.0"
+        izz="1.0"/>
+    </inertial>
+	
+	</link>
+
+	  <joint name='lidar_sensor_joint' type='fixed'>        
+      <parent link="base_link"/>
+      <child link="lidar_link"/>
+    </joint>
+
+
+	  <gazebo reference="lidar_link">
+        <sensor name="lidar" type='gpu_lidar'>
+            <pose>0 0 0.2 0 0 0</pose>
+            <topic>lidar</topic>
+            <update_rate>10</update_rate>
+            <ray>
+                <scan>
+                    <horizontal>
+                        <samples>640</samples>
+                        <resolution>1</resolution>
+                        <min_angle>-1.396263</min_angle>
+                        <max_angle>1.396263</max_angle>
+                    </horizontal>
+                    <vertical>
+                        <samples>16</samples>
+                        <resolution>1</resolution>
+                        <min_angle>-0.261799</min_angle>
+                        <max_angle>0.261799</max_angle>
+                    </vertical>
+                </scan>
+                <range>
+                    <!-- <min>0.08</min> -->
+                    <min>0.1</min>
+                    <max>10.0</max>
+                    <resolution>0.01</resolution>
+                </range>
+            </ray>
+            <always_on>1</always_on>
+            <visualize>true</visualize>
+			<gz_frame_id>lidar_link</gz_frame_id>
+          
+        </sensor>
+    </gazebo>
+
+	<gazebo>
+        <plugin filename="libignition-gazebo-diff-drive-system.so" name="ignition::gazebo::systems::DiffDrive">
+            <left_joint>left_wheel_joint</left_joint>
+            <right_joint>right_wheel_joint</right_joint>
+            <wheel_separation>${2*base_radius}</wheel_separation>
+            <wheel_radius>${wheel_radius}</wheel_radius>
+            <odom_publish_frequency>10</odom_publish_frequency>
+            <topic>cmd_vel</topic>
+            <robotBaseFrame>base_link</robotBaseFrame>
+        </plugin>
+
+        <plugin filename="libignition-gazebo-sensors-system.so" name="ignition::gazebo::systems::Sensors">
+            <render_engine>ogre2</render_engine>
+        </plugin>
+
+
+        <plugin filename="CmdVelPlugin" name="cmd_vel_plugin::PubCmdVel">
+        </plugin>
+
+    </gazebo>
+</robot>

@@ -1,0 +1,19 @@
+<library path="cmd_vel">
+  <class name="cmd_vel/CmdVel" type="cmd_vel::CmdVel" base_class_type="rqt_gui_cpp::Plugin">
+    <description>
+      A GUI plugin to control commands.
+    </description>
+    <qtgui>
+      <group>
+        <label>Control</label>
+        <icon type="theme">folder</icon>
+        <statustip>Plugins related to visualization.</statustip>
+      </group>
+      <label>Vel control</label>
+      <!--
+      <icon type="theme">image-x-generic</icon>
+      <statustip>A GUI plugin for viewing sensor_msgs/Image topics.</statustip>
+      -->
+    </qtgui>
+  </class>
+</library>

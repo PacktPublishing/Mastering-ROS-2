@@ -1,0 +1,5 @@
+<library path="circle_display">
+  <class type="rviz_circle_plugin::CircleDisplay" base_class_type="rviz_common::Display">
+    <description></description>
+  </class>
+</library>
