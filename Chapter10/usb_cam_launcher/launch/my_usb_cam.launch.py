@@ -10,10 +10,10 @@ def generate_launch_description():
             output='screen',
             parameters=[
                 {'video_device': '/dev/video2'},
-                {'image_width': 640},
-                {'image_height': 640},
-                {'pixel_format': 'yuyv2rgb'},   
-                {'camera_frame_id': 'camera'}
+                {'image_width': 1280},
+                {'image_height': 720},
+                {'pixel_format': 'yuyv'},   
+                {'camera_frame_id': 'usb_camera'}
             ],
             remappings=[
                 ('/image_raw', '/image_rect')

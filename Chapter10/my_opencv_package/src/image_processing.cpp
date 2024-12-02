@@ -1,11 +1,10 @@
+#include <cv_bridge/cv_bridge.hpp>
+#include <opencv2/opencv.hpp>
 #include "rclcpp/rclcpp.hpp"
 #include "sensor_msgs/msg/image.hpp"
-#include "std_msgs/msg/header.hpp"
-#include <chrono>
-#include <cv_bridge/cv_bridge.hpp> // cv_bridge converts between ROS 2 image messages and OpenCV image representations.
 #include <opencv2/opencv.hpp> // We include everything about OpenCV as we don't care much about compilation time at the moment.
+#include <chrono>
  
-
 class ImageProcessor : public rclcpp::Node
 {
 public:
@@ -16,13 +15,13 @@ public:
             "/image_raw", 10, std::bind(&ImageProcessor::image_callback, this, std::placeholders::_1));
 
         // Publisher for processed image
-        _contours_imag_pub      = this->create_publisher<sensor_msgs::msg::Image>( "contours/image_raw", 1);
-        _gray_img_pub           = this->create_publisher<sensor_msgs::msg::Image>( "gray/image_raw", 1);
-        _blur_img_pub           = this->create_publisher<sensor_msgs::msg::Image>( "blur/image_raw", 1);
-        _thresholded_img_pub    = this->create_publisher<sensor_msgs::msg::Image>( "thresholded/image_raw", 1);
-        _prespective_img_pub    = this->create_publisher<sensor_msgs::msg::Image>( "prespective/image_raw", 1);
-        _corner_img_pub         = this->create_publisher<sensor_msgs::msg::Image>( "corner/image_raw", 1);
-        _keypoints_img_pub      = this->create_publisher<sensor_msgs::msg::Image>( "keypoints/image_raw", 1);
+        contours_imag_pub_      = this->create_publisher<sensor_msgs::msg::Image>( "contours/image_raw", 1);
+        gray_img_pub_           = this->create_publisher<sensor_msgs::msg::Image>( "gray/image_raw", 1);
+        blur_img_pub_           = this->create_publisher<sensor_msgs::msg::Image>( "blur/image_raw", 1);
+        thresholded_img_pub_    = this->create_publisher<sensor_msgs::msg::Image>( "thresholded/image_raw", 1);
+        prespective_img_pub_    = this->create_publisher<sensor_msgs::msg::Image>( "prespective/image_raw", 1);
+        corner_img_pub_         = this->create_publisher<sensor_msgs::msg::Image>( "corner/image_raw", 1);
+        keypoints_img_pub_      = this->create_publisher<sensor_msgs::msg::Image>( "keypoints/image_raw", 1);
     
     }
 
@@ -72,8 +71,8 @@ private:
         cv::Mat dst, dst_norm, dst_norm_scaled;
         dst = cv::Mat::zeros(gray_image.size(), CV_32FC1);
         // Parameters for Harris corner detection
-        int blockSize = 2;      // Neighborhood size
-        int apertureSize = 3;    // Aperture parameter for the Sobel operator
+        const int blockSize = 2;      // Neighborhood size
+        const int apertureSize = 3;    // Aperture parameter for the Sobel operator
         double k = 0.04;         // Harris detector free parameter
         // Detecting corners
         cv::cornerHarris(gray_image, dst, blockSize, apertureSize, k);
@@ -91,30 +90,30 @@ private:
         }
     
         msg_ = cv_bridge::CvImage(std_msgs::msg::Header(), "bgr8", contours_image).toImageMsg();
-        _contours_imag_pub->publish(*msg_.get());
+        contours_imag_pub_->publish(*msg_.get());
         msg_ = cv_bridge::CvImage(std_msgs::msg::Header(), "mono8", gray_image).toImageMsg();
-        _gray_img_pub->publish(*msg_.get());
+        gray_img_pub_->publish(*msg_.get());
         msg_ = cv_bridge::CvImage(std_msgs::msg::Header(), "bgr8", blur_image).toImageMsg();
-        _blur_img_pub->publish(*msg_.get());
+        blur_img_pub_->publish(*msg_.get());
         msg_ = cv_bridge::CvImage(std_msgs::msg::Header(), "mono8", thresholded_image).toImageMsg();
-        _thresholded_img_pub->publish(*msg_.get());
+        thresholded_img_pub_->publish(*msg_.get());
         msg_ = cv_bridge::CvImage(std_msgs::msg::Header(), "rgb8", corner_image).toImageMsg();
-        _corner_img_pub->publish(*msg_.get());
+        corner_img_pub_->publish(*msg_.get());
         msg_ = cv_bridge::CvImage(std_msgs::msg::Header(), "bgr8", prespective_img).toImageMsg();
-        _prespective_img_pub->publish(*msg_.get());
+        prespective_img_pub_->publish(*msg_.get());
         msg_ = cv_bridge::CvImage(std_msgs::msg::Header(), "bgr8", keypoints_img).toImageMsg();
-        _keypoints_img_pub->publish(*msg_.get());
+        keypoints_img_pub_->publish(*msg_.get());
     }
 
    
     rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr image_subscription_;
-    rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr _contours_imag_pub;
-    rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr _gray_img_pub;
-    rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr _blur_img_pub;
-    rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr _thresholded_img_pub;
-    rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr _prespective_img_pub;
-    rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr _corner_img_pub;
-    rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr _keypoints_img_pub;
+    rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr contours_imag_pub_;
+    rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr gray_img_pub_;
+    rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr blur_img_pub_;
+    rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr thresholded_img_pub_;
+    rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr prespective_img_pub_;
+    rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr corner_img_pub_;
+    rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr keypoints_img_pub_;
     sensor_msgs::msg::Image::SharedPtr msg_;
 
 };
