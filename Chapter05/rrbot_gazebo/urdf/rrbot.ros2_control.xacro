@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!-- Revolute-Revolute Manipulator -->
+<robot name="rrbot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <ros2_control name="RobotSystem" type="system">
+        <hardware>
+            <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+        </hardware>
+
+        <joint name="joint1">
+            <command_interface name="position">
+                <param name="min">-3.14</param>
+                <param name="max">3.14</param>
+            </command_interface>
+            <state_interface name="position"/>
+        </joint>
+
+        <joint name="joint2">
+            <command_interface name="position">
+                <param name="min">-3.14</param>
+                <param name="max">3.14</param>
+            </command_interface>
+            <state_interface name="position"/>
+        </joint>
+    </ros2_control>   
+
+
+  <!-- Gazebo ROS 2 Control plugin -->
+    <gazebo>
+        <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+            <parameters>$(find rrbot_gazebo)/config/rrbot_controllers.yaml</parameters>
+            <ros>
+                <remapping>/controller_manager/robot_description:=/robot_description</remapping>
+            </ros>
+        </plugin>
+    </gazebo>
+
+</robot>

@@ -1,0 +1,221 @@
+<?xml version="1.0"?>
+<!-- Revolute-Revolute Manipulator -->
+<robot name="rrbot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:property name="M_PI" value="3.1415926535897931" />  
+  <xacro:property name="d435_cam_width" value="0.090"/>
+  <xacro:property name="d435_cam_height" value="0.025"/>
+  <xacro:property name="d435_cam_depth" value="0.02505"/> 
+  <xacro:property name="d435_cam_depth_to_infra1_offset" value="0.0"/>
+  <xacro:property name="d435_cam_depth_to_infra2_offset" value="-0.050"/>
+  <xacro:property name="d435_cam_depth_to_color_offset" value="0.015"/>  
+  <xacro:property name="camera_tilt_angle_deg" value="5"/>  
+
+
+<link name="tip">
+  <!-- Visual representation -->
+  <visual>
+    <geometry>
+      <box size="0.05 0.05 0.05"/>
+    </geometry>
+    <material name="Blue">
+      <color rgba="0 0 1 1"/>
+    </material>
+  </visual>
+
+  <!-- Collision representation -->
+  <collision>
+    <geometry>
+      <box size="0.05 0.05 0.05"/>
+    </geometry>
+  </collision>
+
+  <!-- Inertial properties -->
+  <inertial>
+    <mass value="0.1"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <inertia 
+      ixx="0.0000020833" ixy="0.0" ixz="0.0" 
+      iyy="0.0000020833" iyz="0.0" 
+      izz="0.0000020833"/>
+  </inertial>
+</link>
+
+
+  
+  <joint name="tip_joint" type="fixed">
+    <parent link="tool_link"/>
+    <child link="tip" />
+   <origin xyz="0 0 0.01" rpy="0.0 0 0"/>  
+  </joint>
+  
+  <joint name="camera_joint" type="fixed">
+    <parent link="tip"/>
+    <child link="camera_link" />
+   <origin xyz="0 0 0" rpy="0.0 0 0"/>  
+
+  </joint>
+  
+  <link name="camera_link">
+  <!--
+    <visual>
+      <origin xyz="0 0 0" rpy="${M_PI/2} 0.0 ${M_PI/2}"/>
+      <geometry>
+        <box size="${d435_cam_depth} ${d435_cam_width} ${d435_cam_height}"/>
+      </geometry>
+      <material name="aluminum">
+        <color rgba="0.5 0.5 0.5 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${d435_cam_depth} ${d435_cam_width} ${d435_cam_height}"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.072" />
+      <origin xyz="0 0 0" />
+      <inertia ixx="0.003881243" ixy="0.0" ixz="0.0" iyy="0.000498940" iyz="0.0" izz="0.003879257" />
+    </inertial>
+    -->
+  </link>
+
+  <joint name="camera_depth_joint" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <parent link="camera_link"/>
+    <child link="camera_depth_frame" />
+  </joint>
+  <link name="camera_depth_frame"/>
+
+  <joint name="camera_depth_optical_joint" type="fixed">
+    <origin xyz="0 0 0" rpy="${-M_PI/2} 0 ${-M_PI/2}" />
+    <parent link="camera_depth_frame" />
+    <child link="camera_depth_optical_frame" />
+  </joint>
+  <link name="camera_depth_optical_frame"/>
+
+  <joint name="camera_infra1_joint" type="fixed">
+    <origin xyz="0 ${d435_cam_depth_to_infra1_offset} 0" rpy="0 0 0" />
+    <parent link="camera_link" />
+    <child link="camera_infra1_frame" />
+  </joint>
+  <link name="camera_infra1_frame"/>
+
+  <joint name="camera_infra1_optical_joint" type="fixed">
+    <origin xyz="0 0 0" rpy="${-M_PI/2} 0 ${-M_PI/2}" />
+    <parent link="camera_infra1_frame" />
+    <child link="camera_infra1_optical_frame" />
+  </joint>
+  <link name="camera_infra1_optical_frame"/>
+
+  <joint name="camera_infra2_joint" type="fixed">
+    <origin xyz="0 ${d435_cam_depth_to_infra2_offset} 0" rpy="0 0 0" />
+    <parent link="camera_link" />
+    <child link="camera_infra2_frame" />
+  </joint>
+  <link name="camera_infra2_frame"/>
+
+  <joint name="camera_infra2_optical_joint" type="fixed">
+    <origin xyz="0 0 0" rpy="${-M_PI/2} 0 ${-M_PI/2}" />
+    <parent link="camera_infra2_frame" />
+    <child link="camera_infra2_optical_frame" />
+  </joint>
+  <link name="camera_infra2_optical_frame"/>
+
+  <joint name="camera_color_joint" type="fixed">
+    <origin xyz="0 ${d435_cam_depth_to_color_offset} 0" rpy="0 0 0" />
+    <parent link="camera_link" />
+    <child link="camera_color_frame" />
+  </joint>
+  <link name="camera_color_frame"/>
+
+  <joint name="camera_color_optical_joint" type="fixed">
+    <origin xyz="0 0 0" rpy="${-M_PI/2} 0 ${-M_PI/2}" />
+    <parent link="camera_color_frame" />
+    <child link="camera_color_optical_frame" />
+  </joint>
+  <link name="camera_color_optical_frame"/>
+
+  <gazebo reference="camera_link">
+    <sensor name="camera" type="rgbd_camera">
+      <camera>
+        <horizontal_fov>1.5184</horizontal_fov>
+        <image>
+          <width>640</width>
+          <height>480</height>
+        </image>
+        <clip>
+          <near>0.05</near>
+          <far>8.0</far>
+        </clip>
+      </camera>
+      <always_on>1</always_on>
+      <gz_frame_id>camera_link</gz_frame_id>
+      <topic>camera</topic>
+      <update_rate>5</update_rate>
+      <visualize>true</visualize>
+    </sensor>
+  </gazebo>
+
+ 
+   <gazebo>
+        <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
+            <render_engine>ogre2</render_engine>
+        </plugin>
+  </gazebo>
+
+  <gazebo reference="tip">
+        <sensor name='gpu_lidar' type='gpu_lidar'>
+          <pose>0 0 0 0 0 0</pose>
+          <topic>scan</topic>
+          <gz_frame_id>tip</gz_frame_id>          
+          <update_rate>10</update_rate>
+          <lidar>
+            <scan>
+              <horizontal>
+                <samples>640</samples>
+                <resolution>1</resolution>
+                <min_angle>-1.396263</min_angle>
+                <max_angle>1.396263</max_angle>
+              </horizontal>
+              <vertical>
+                <samples>1</samples>
+                <resolution>1</resolution>
+                <min_angle>0.0</min_angle>
+                <max_angle>0.0</max_angle>
+              </vertical>
+            </scan>
+            <range>
+              <min>0.08</min>
+              <max>10.0</max>
+              <resolution>0.01</resolution>
+            </range>
+          </lidar>
+          <visualize>true</visualize>
+        </sensor>
+  </gazebo>
+
+
+ <!-- Link1 -->
+  <gazebo reference="link1">
+    <material>
+      <diffuse> 1 0.423529412 0.039215686 1</diffuse>
+      <ambient> 1 0.423529412 0.039215686 1</ambient>
+      <specular>1 0.423529412 0.039215686 1</specular>
+    </material>
+  </gazebo>
+
+  <!-- Link2 -->
+  <gazebo reference="link2">
+    <mu1>0.2</mu1>
+    <mu2>0.2</mu2>
+    <material>
+      <diffuse> 0 0 0 1</diffuse>
+      <ambient> 0 0 0 1</ambient>
+      <specular>0 0 0 1</specular>
+    </material>
+  </gazebo>
+
+
+</robot>

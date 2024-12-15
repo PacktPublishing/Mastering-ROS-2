@@ -1,0 +1,34 @@
+- ros_topic_name: "/clock"
+  gz_topic_name: "/clock"
+  ros_type_name: "rosgraph_msgs/msg/Clock"
+  gz_type_name: "gz.msgs.Clock"
+  direction: GZ_TO_ROS
+
+- ros_topic_name: "/diff_drive/scan"
+  gz_topic_name: "/scan"
+  ros_type_name: "sensor_msgs/msg/LaserScan"
+  gz_type_name: "gz.msgs.LaserScan"
+  direction: GZ_TO_ROS 
+  
+- ros_topic_name: "/imu"
+  gz_topic_name: "/imu"
+  ros_type_name: "sensor_msgs/msg/Imu"
+  gz_type_name: "gz.msgs.IMU"
+  direction: GZ_TO_ROS   
+  
+  # gz topic published by Sensors plugin 
+- ros_topic_name: "camera/depth/camera_info"
+  gz_topic_name: "camera/camera_info"
+  ros_type_name: "sensor_msgs/msg/CameraInfo"
+  gz_type_name: "gz.msgs.CameraInfo" # In future, this will be gz.msgs.CameraInfo
+  direction: GZ_TO_ROS
+  #lazy: true # Determines whether connections are created immediately at startup (when false) or only when data is actually requested by a subscriber (when true), helping to conserve system resources at the cost of potential initial delays in data flow.
+
+# gz topic published by Sensors plugin 
+- ros_topic_name: "camera/depth/color/points"
+  gz_topic_name: "camera/points"
+  ros_type_name: "sensor_msgs/msg/PointCloud2"
+  gz_type_name: "gz.msgs.PointCloudPacked" # In future, this will be gz.msgs.PointCloudPacked
+  direction: GZ_TO_ROS
+  #lazy: true
+

@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<!-- Revolute-Revolute Manipulator -->
+<robot name="rrbot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:include filename="$(find rrbot_description)/urdf/rrbot.urdf.xacro"/>
+  <xacro:include filename="$(find rrbot_gazebo)/urdf/rrbot.gazebo.xacro"/>
+  <xacro:include filename="$(find rrbot_gazebo)/urdf/rrbot.ros2_control.xacro"/>
+
+
+</robot>
