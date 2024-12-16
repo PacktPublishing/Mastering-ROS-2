@@ -20,8 +20,8 @@ def generate_launch_description():
     world_file = LaunchConfiguration("world_file", default = join(pkg_ros_gz_rrbot, "worlds", "empty.world"))
 
     # Parse robot description from xacro
-    robot_description_file = os.path.join(pkg_ros_gz_rrbot, 'urdf', 'diffbot.xacro')
-    ros_gz_bridge_config = os.path.join(pkg_ros_gz_rrbot, 'config', 'ros_gz_bridge.yaml')
+    robot_description_file = os.path.join(pkg_ros_gz_rrbot, 'urdf/gz', 'diffbot.xacro')
+    ros_gz_bridge_config = os.path.join(pkg_ros_gz_rrbot, 'config', 'ros_gz_bridge_gazebo.yaml')
     
     robot_description_config = xacro.process_file(
         robot_description_file
@@ -93,30 +93,13 @@ def generate_launch_description():
         ],
       )
 
-    # Start arm controller
-    
-    start_diffbot_controller_cmd = ExecuteProcess(
-        cmd=['ros2', 'control', 'load_controller', '--set-state', 'active',
-            'diffbot_base_controller'],
-            output='screen')
 
-    # Launch joint state broadcaster
-    start_joint_state_broadcaster_cmd = ExecuteProcess(
-        cmd=['ros2', 'control', 'load_controller', '--set-state', 'active',
-            'joint_state_broadcaster'],
-            output='screen')
+    # Launch the rqt_steering controller standalone
+    rqt_robot_steering = ExecuteProcess(
+            cmd=['rqt', '--standalone', 'rqt_robot_steering'],
+            output='screen',
+        )
 
-    # Launch the joint state broadcaster after spawning the robot
-    load_joint_state_broadcaster_cmd = RegisterEventHandler(
-        event_handler=OnProcessExit(
-        target_action=spawn ,
-        on_exit=[start_joint_state_broadcaster_cmd],))
-
-    # Launch the arm controller after launching the joint state broadcaster
-    load_diffbot_controller_cmd = RegisterEventHandler(
-        event_handler=OnProcessExit(
-        target_action=start_joint_state_broadcaster_cmd,
-        on_exit=[start_diffbot_controller_cmd],))
 
     return LaunchDescription(
         [
@@ -126,8 +109,7 @@ def generate_launch_description():
             start_gazebo_ros_bridge_cmd,
             start_gazebo_ros_image_bridge_cmd,
             robot_state_publisher,
-            load_diffbot_controller_cmd,
-            load_joint_state_broadcaster_cmd,
             rviz,
+            rqt_robot_steering,
         ]
     )

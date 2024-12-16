@@ -1,6 +1,9 @@
 <?xml version="1.0" ?>
 <sdf version="1.7">
     <world name="empty_world">
+  
+    
+    
         <light type="directional" name="sun">
             <cast_shadows>true</cast_shadows>
             <pose>0 0 10 0 0 0</pose>
@@ -156,44 +159,6 @@
       </link>
     </model>
 
-    <model name="capsule">
-      <pose>0 -3.0 0.5 0 0 0</pose>
-      <link name="capsule_link">
-        <inertial>
-          <inertia>
-            <ixx>0.074154</ixx>
-            <ixy>0</ixy>
-            <ixz>0</ixz>
-            <iyy>0.074154</iyy>
-            <iyz>0</iyz>
-            <izz>0.018769</izz>
-          </inertia>
-          <mass>1.0</mass>
-        </inertial>
-        <collision name="capsule_collision">
-          <geometry>
-            <capsule>
-              <radius>0.2</radius>
-              <length>2</length>
-            </capsule>
-          </geometry>
-        </collision>
-        <visual name="capsule_visual">
-          <geometry>
-            <capsule>
-              <radius>0.2</radius>
-              <length>2</length>
-            </capsule>
-          </geometry>
-          <material>
-            <ambient>1 1 0 1</ambient>
-            <diffuse>1 1 0 1</diffuse>
-            <specular>1 1 0 1</specular>
-          </material>
-        </visual>
-      </link>
-    </model>
-
 
     <model name="cone">
       <pose>3.08 1.93 0.5 0 0 0</pose>
@@ -226,10 +191,5 @@
       </link>
     </model>
 
-
-
-
-        
-        
     </world>
 </sdf> 

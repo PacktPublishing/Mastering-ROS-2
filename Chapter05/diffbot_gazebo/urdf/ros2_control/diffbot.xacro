@@ -3,8 +3,8 @@
 <robot name="diffbot" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
 
-  <xacro:include filename="$(find diffbot_gazebo)/urdf/diffbot.gazebo.xacro"/>
-  <xacro:include filename="$(find diffbot_gazebo)/urdf/diffbot.ros2_control.xacro"/>
+  <xacro:include filename="$(find diffbot_gazebo)/urdf/ros2_control/diffbot.gazebo.xacro"/>
+  <xacro:include filename="$(find diffbot_gazebo)/urdf/ros2_control/diffbot.ros2_control.xacro"/>
 
   <!-- Chassis -->
   <link name="base_footprint"/>

@@ -20,6 +20,13 @@ install (
   DESTINATION share/${PROJECT_NAME}
 )
 
+# Install Python nodes
+install(
+  PROGRAMS
+  scripts/twist_convert.py  # Path to your Python script
+  DESTINATION lib/${PROJECT_NAME}  # Install in a standard location
+)
+
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
