@@ -190,20 +190,75 @@
 
 
 
+   <gazebo reference="left_wheel">
+   
+      <collision>
+        <surface>
+          <friction>
+            <ode>
+              <mu>1</mu>
+              <mu2>1</mu2>
+              <slip1>0.035</slip1>
+              <slip2>0</slip2>
+              <fdir1>0 0 1</fdir1>
+            </ode>
+            <bullet>
+              <friction>1</friction>
+              <friction2>1</friction2>
+              <rolling_friction>0.1</rolling_friction>
+            </bullet>
+          </friction>
+        </surface>
+      </collision>
 
- <!-- Link1 -->
-  <gazebo reference="left_wheel">
-    <mu1>10</mu1>
-    <mu2>10</mu2>
-  </gazebo>
+  </gazebo> 
+  
+    
+   <gazebo reference="right_wheel">
+      <collision>
+        <surface>
+          <friction>
+            <ode>
+              <mu>1</mu>
+              <mu2>1</mu2>
+              <slip1>0.035</slip1>
+              <slip2>0</slip2>
+              <fdir1>0 0 1</fdir1>
+            </ode>
+            <bullet>
+              <friction>1</friction>
+              <friction2>1</friction2>
+              <rolling_friction>0.1</rolling_friction>
+            </bullet>
+          </friction>
+        </surface>
+      </collision>
 
-  <!-- Link2 -->
-  <gazebo reference="right_wheel">
-    <mu1>10</mu1>
-    <mu2>10</mu2>
-  </gazebo>
+  </gazebo> 
+
   
+   <gazebo reference="caster">
+   
+      <collision>
+        <surface>
+          <friction>
+            <ode>
+              <mu>1</mu>
+              <mu2>1</mu2>
+              <slip1>0.035</slip1>
+              <slip2>0</slip2>
+              <fdir1>0 0 1</fdir1>
+            </ode>
+            <bullet>
+              <friction>1</friction>
+              <friction2>1</friction2>
+              <rolling_friction>0.1</rolling_friction>
+            </bullet>
+          </friction>
+        </surface>
+      </collision>
+ </gazebo> 
   
-  
+
 
 </robot>

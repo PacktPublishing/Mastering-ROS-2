@@ -137,6 +137,7 @@
         </plugin>
  
         <plugin filename="gz-sim-joint-state-publisher-system" name="gz::sim::systems::JointStatePublisher">
+        <topic>/joint_states</topic>      
         </plugin>
 
 
@@ -153,21 +154,9 @@
         <frame_id>odom</frame_id>     
         <odom_topic>odom</odom_topic>             
         <child_frame_id>base_footprint</child_frame_id>            
-<!--
-        <max_linear_acceleration>1</max_linear_acceleration>
-        <min_linear_acceleration>-1</min_linear_acceleration>
-        <max_angular_acceleration>2</max_angular_acceleration>
-        <min_angular_acceleration>-2</min_angular_acceleration>
-        <max_linear_velocity>0.5</max_linear_velocity>
-        <min_linear_velocity>-0.5</min_linear_velocity>
-        <max_angular_velocity>1</max_angular_velocity>
-        <min_angular_velocity>-1</min_angular_velocity>
--->
+
 </plugin>
-
-
-
-  </gazebo>
+ </gazebo>
 
 
     <gazebo reference="imu">
@@ -183,18 +172,73 @@
 
   
    <gazebo reference="left_wheel">
-       <mu>1.0</mu>
+   
+      <collision>
+        <surface>
+          <friction>
+            <ode>
+              <mu>1</mu>
+              <mu2>1</mu2>
+              <slip1>0.035</slip1>
+              <slip2>0</slip2>
+              <fdir1>0 0 1</fdir1>
+            </ode>
+            <bullet>
+              <friction>1</friction>
+              <friction2>1</friction2>
+              <rolling_friction>0.1</rolling_friction>
+            </bullet>
+          </friction>
+        </surface>
+      </collision>
+
   </gazebo> 
   
     
    <gazebo reference="right_wheel">
-       <mu>1.0</mu>
+      <collision>
+        <surface>
+          <friction>
+            <ode>
+              <mu>1</mu>
+              <mu2>1</mu2>
+              <slip1>0.035</slip1>
+              <slip2>0</slip2>
+              <fdir1>0 0 1</fdir1>
+            </ode>
+            <bullet>
+              <friction>1</friction>
+              <friction2>1</friction2>
+              <rolling_friction>0.1</rolling_friction>
+            </bullet>
+          </friction>
+        </surface>
+      </collision>
+
   </gazebo> 
 
   
    <gazebo reference="caster">
-       <mu>1.0</mu>
-  </gazebo> 
+   
+      <collision>
+        <surface>
+          <friction>
+            <ode>
+              <mu>1</mu>
+              <mu2>1</mu2>
+              <slip1>0.035</slip1>
+              <slip2>0</slip2>
+              <fdir1>0 0 1</fdir1>
+            </ode>
+            <bullet>
+              <friction>1</friction>
+              <friction2>1</friction2>
+              <rolling_friction>0.1</rolling_friction>
+            </bullet>
+          </friction>
+        </surface>
+      </collision>
+ </gazebo> 
   
   
   
