@@ -2,7 +2,7 @@ import os
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription
+from launch.actions import IncludeLaunchDescription, TimerAction
 from launch.substitutions import LaunchConfiguration,PythonExpression
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
@@ -109,12 +109,20 @@ def generate_launch_description():
         event_handler=OnProcessExit(
         target_action=start_joint_state_broadcaster_cmd,
         on_exit=[start_arm_controller_cmd],))
+               
 
         # Launch the rqt_joint_trajectory_controller standalone
     rqt_traj_controller = ExecuteProcess(
             cmd=['rqt', '--standalone', 'rqt_joint_trajectory_controller'],
             output='screen',
         )
+
+    # Delay the start by 7 seconds using TimerAction
+    delayed_rqt_traj_controller = TimerAction(
+        period=10.0,  # Delay in seconds
+        actions=[rqt_traj_controller]
+    )
+
 
 
 
@@ -129,6 +137,6 @@ def generate_launch_description():
             load_arm_controller_cmd,
             load_joint_state_broadcaster_cmd,
             rviz,
-            rqt_traj_controller,
+            delayed_rqt_traj_controller,
         ]
     )

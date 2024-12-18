@@ -23,7 +23,7 @@ RUN groupadd --gid $GID $docker_user_name && useradd --uid $UID --gid $docker_us
     && echo "$docker_user_name ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 # Install necessary dependencies
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get -y upgrade && apt-get install -y \
     git \
     python3-pip \
     python3-colcon-common-extensions \
@@ -53,6 +53,7 @@ RUN apt-get update && apt-get install -y \
     ros-${ROS_DISTRO}-rqt-tf-tree \
     ros-${ROS_DISTRO}-rqt-graph \
     ros-${ROS_DISTRO}-rqt-joint-trajectory-controller \
+    ros-${ROS_DISTRO}-rqt-robot-steering \    
     ros-${ROS_DISTRO}-rviz-imu-plugin \    
     ros-${ROS_DISTRO}-webots-ros2 \   
     && rm -rf /var/lib/apt/lists/*
