@@ -68,7 +68,8 @@ class BTExecutor : public rclcpp::Node {
  
 int main(int argc, char * argv[]) {
   rclcpp::init(argc, argv);
-  rclcpp::spin( std::make_shared<BTExecutor>() );
+  auto node = std::make_shared<BTExecutor>();
+  rclcpp::spin(node);
   rclcpp::shutdown();
   return 0;
 }

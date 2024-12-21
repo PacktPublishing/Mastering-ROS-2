@@ -12,6 +12,8 @@ class PublishResult : public BT::StatefulActionNode {
   public:
     PublishResult(const std::string & action_name, const BT::NodeConfig & conf) : 
       BT::StatefulActionNode(action_name, conf) {    
+                RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "QUI!."); 
+
         node_ = conf.blackboard->get<rclcpp::Node::SharedPtr>("node");
     }
  
@@ -51,12 +53,15 @@ class NumberChecker : public BT::StatefulActionNode {
   public:
     NumberChecker(const std::string & action_name, const BT::NodeConfig & conf) : 
       BT::StatefulActionNode(action_name, conf) {    
+
     }
  
     BT::NodeStatus onStart() {
-        getInput<int>("check_value", num_threshold_ );
-        
-        std::cout << "Check value: " << num_threshold_ << std::endl;
+
+
+        if(!getInput<int>("check_value", num_threshold_)) {
+          throw BT::RuntimeError("missing required input [goal]");
+        }
 
         return BT::NodeStatus::RUNNING;
     }
@@ -109,7 +114,7 @@ class BTExecutor : public rclcpp::Node {
 
     void init_btree() {
       
-        //blackboard_->set<rclcpp::Node::SharedPtr>("node", this->shared_from_this());
+        blackboard_->set<rclcpp::Node::SharedPtr>("node", this->shared_from_this());
         
         factory_.registerNodeType<NumberChecker>("CheckNumber1");
         factory_.registerNodeType<NumberChecker>("CheckNumber2");

@@ -7,18 +7,4 @@
     </Sequence>
   </BehaviorTree>
 
-  <!-- Description of Node Models (used by Groot) -->
-  <TreeNodesModel>
-    <Action ID="HelloNode1"
-            editable="true">
-      <input_port name="msg"
-                  default="-1"/>
-    </Action>
-    <Action ID="HelloNode2"
-            editable="true">
-      <input_port name="msg"
-                  default="-1"/>
-    </Action>
-  </TreeNodesModel>
-
 </root>
