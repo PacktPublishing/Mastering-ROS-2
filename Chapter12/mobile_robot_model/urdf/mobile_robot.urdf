@@ -1,0 +1,172 @@
+<robot name="mobile_robot">
+  <!--<link name="base_footprint"></link>
+  <joint name="base_joint" type="fixed">
+    <parent link="base_footprint" />
+    <child link="base_link" />
+    <origin xyz="-0.05656728130107069 0.20694419100877182 0.5" rpy="0 0 0" />
+  </joint> -->
+  <link name="base_footprint">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.22 0.11 0.01" />
+      </geometry>
+      <!--<material name="base_link-material">
+        <color rgba="0.033104766565152086 0.46778379610254284 0.12477181755144427 1" />
+      </material>-->
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.22 0.11 0.01" />
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="1" />
+      <inertia ixx="0.16666666666666666" ixy="0" ixz="0" iyy="0.16666666666666666" iyz="0" izz="0.16666666666666666" />
+    </inertial>
+  </link>
+  <joint name="base_link_to_lidar" type="fixed">
+    <parent link="base_footprint" />
+    <child link="base_laser" />
+    <origin xyz="0.06986067162727368 0.00408591397784569 0.01272105737519193" rpy="0 0 0" />
+  </joint>
+  <link name="base_laser">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <cylinder radius="0.02" length="0.03" />
+      </geometry>
+      <!--
+      <material name="lidar-material">
+        <color rgba="0 0 0 1" />
+      </material>-->
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <cylinder radius="0.02" length="0.03" />
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="1" />
+      <inertia ixx="0.3333333333333333" ixy="0" ixz="0" iyy="0.5" iyz="0" izz="0.3333333333333333" />
+    </inertial>
+  </link>
+  <joint name="base_link_to_wheel_right" type="fixed">
+    <parent link="base_footprint" />
+    <child link="wheel_right" />
+    <origin xyz="0.0426152091725569 -0.06332031957510047 0" rpy="1.5707963267948963 0 0" />
+    <!--<axis xyz="0 0 1"/>-->
+  </joint>
+  <link name="wheel_right">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <cylinder radius="0.032" length="0.01" />
+      </geometry>
+      <!--
+      <material name="wheel_right-material">
+        <color rgba="0.6375968739867731 0.04373502925049377 0.008023192982520563 1" />
+      </material>-->
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <cylinder radius="0.032" length="0.01" />
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="1" />
+      <inertia ixx="0.3333333333333333" ixy="0" ixz="0" iyy="0.5" iyz="0" izz="0.3333333333333333" />
+    </inertial>
+  </link>
+  <joint name="base_link_to_wheel_left" type="fixed">
+    <parent link="base_footprint" />
+    <child link="wheel_left" />
+    <origin xyz="0.040044432499384504 0.0625430709639706 -0.0028519977579222755" rpy="1.5707963267948963 0 0" />
+    <axis xyz="0 0 1"/>
+  </joint>
+  <link name="wheel_left">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <cylinder radius="0.032" length="0.01" />
+      </geometry>
+      <!--
+      <material name="wheel_left-material">
+        <color rgba="0.6375968739867731 0.04373502925049377 0.008023192982520563 1" />
+      </material>-->
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <cylinder radius="0.032" length="0.01" />
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="1" />
+      <inertia ixx="0.3333333333333333" ixy="0" ixz="0" iyy="0.5" iyz="0" izz="0.3333333333333333" />
+    </inertial>
+  </link>
+  <joint name="base_link_to_omniwheel" type="fixed">
+    <parent link="base_footprint" />
+    <child link="omniwheel" />
+    <origin xyz="-0.08151645436678397 0 -0.019833524261632485" rpy="0 0 0" />
+  </joint>
+  <link name="omniwheel">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <sphere radius="0.015" />
+      </geometry>
+      <!--
+      <material name="omniwheel-material">
+        <color rgba="0.14702726648767014 0.10461648408208657 0.4969329950515914 1" />
+      </material>-->
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <sphere radius="0.015" />
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="1" />
+      <inertia ixx="0.4" ixy="0" ixz="0" iyy="0.4" iyz="0" izz="0.4" />
+    </inertial>
+  </link>
+  <joint name="base_link_to_Raspberry" type="fixed">
+    <parent link="base_footprint" />
+    <child link="Raspberry" />
+    <origin xyz="-0.0684529754364332 0.00007999849359541233 0.007494221284821023" rpy="0 0 0" />
+  </joint>
+  <link name="Raspberry">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.08 0.08 0.01" />
+      </geometry>
+      <!--
+      <material name="Raspberry-material">
+        <color rgba="0.2874408377161099 0.9559733532482866 0.913098651791473 1" />
+      </material>-->
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.08 0.08 0.01" />
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="1" />
+      <inertia ixx="0.16666666666666666" ixy="0" ixz="0" iyy="0.16666666666666666" iyz="0" izz="0.16666666666666666" />
+    </inertial>
+  </link>
+</robot>
