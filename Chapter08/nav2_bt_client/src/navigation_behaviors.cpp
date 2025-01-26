@@ -65,41 +65,6 @@ BT::PortsList SetLocations::providedPorts()
 }
 
 
-// GETLOCATIONFROMQUEUE
-// Gets a location name from a queue of locations to visit.
-// If the queue is empty, this behavior fails.
-GetLocationFromQueue::GetLocationFromQueue(const std::string& name,
-                                           const BT::NodeConfig& config) :
-    BT::SyncActionNode(name, config)
-{
-    std::cout << "[" << this->name() << "] Initialized" << std::endl;
-}
-
-BT::NodeStatus GetLocationFromQueue::tick()
-{   
-    // Get the locations from the port and select first one as the next target
-    auto location_queue_ = getInput<std::deque<std::string>>("loc_names");
-    if (!location_queue_) {
-        std::cerr << "Couldn't get loc_names!" << std::endl;
-    }
-    if (location_queue_.value().empty()) {
-        std::cout << "[" << this->name() << "] No more locations!" << std::endl;
-        return BT::NodeStatus::FAILURE;
-    } else {
-        std::string tgt_loc = location_queue_.value().front();
-        setOutput("target_location", tgt_loc);
-        location_queue_.value().pop_front();
-        std::cout << "[" << this->name() << "] Targeting location: " << tgt_loc << std::endl;
-        setOutput("loc_names", location_queue_.value());
-        return BT::NodeStatus::SUCCESS;
-    }
-}
-
-BT::PortsList GetLocationFromQueue::providedPorts()
-{
-    return { BT::OutputPort<std::string>("target_location"),
-             BT::BidirectionalPort<std::deque<std::string>>("loc_names") };
-}
 
 // GOTOPOSE
 // Wrapper behavior around the `navigate_to_pose` action client,

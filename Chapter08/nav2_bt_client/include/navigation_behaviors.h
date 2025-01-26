@@ -38,17 +38,6 @@ class SetLocations : public BT::SyncActionNode
     static BT::PortsList providedPorts();
 };
 
-// Gets location from a queue of locations read from a list.
-class GetLocationFromQueue : public BT::SyncActionNode
-{
-  public:
-    GetLocationFromQueue(const std::string& name, const BT::NodeConfig& config);
-    BT::NodeStatus tick() override;
-    static BT::PortsList providedPorts();
-  
-  private:
-    std::deque<std::string> location_queue_;
-};
 
 // Go to a target location (wraps around `navigate_to_pose` action).
 class GoToPose : public BT::StatefulActionNode
