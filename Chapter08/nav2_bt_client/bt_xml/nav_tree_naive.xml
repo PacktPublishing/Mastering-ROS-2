@@ -1,0 +1,25 @@
+<root BTCPP_format="4" >
+    <!-- Behavior tree that sequentially navigates locations naively -->
+    <BehaviorTree ID="MainTree">
+        <Sequence name="sequence">
+            <SetLocations   name="set_locations"    num_locs="{num_locs}"   loc_names="{loc_names}" loc_poses="{loc_poses}"/>
+            <GoToPose       name="go_to_location1"  loc_poses="{loc_poses}" loc="medical_shop" />
+            <GoToPose       name="go_to_location2"  loc_poses="{loc_poses}" loc="room2" />
+            <GoToPose       name="go_to_location3"  loc_poses="{loc_poses}" loc="room1" />
+            <GoToPose       name="go_to_location4"  loc_poses="{loc_poses}" loc="initial_pose" />
+        </Sequence>
+    </BehaviorTree>
+
+    <!-- Description of Node Models (used by Groot2) -->
+    <TreeNodesModel>
+        <Action ID="SetLocations">
+            <output_port name="num_locs"/>
+            <output_port name="loc_names"/>
+            <output_port name="loc_poses"/>
+        </Action>
+        <Action ID="GoToPose">
+            <input_port name="loc"/>
+            <input_port name="loc_poses"/>
+        </Action>
+    </TreeNodesModel>
+</root>

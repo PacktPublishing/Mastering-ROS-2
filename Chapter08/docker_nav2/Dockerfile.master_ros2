@@ -17,10 +17,12 @@ ENV HOME="/home/$docker_user_name"
 ENV ROS_DISTRO=jazzy
 ENV ROS_WS=${HOME}/$ros_ws
 
+
 # Add user and install sudo
 RUN groupadd --gid $GID $docker_user_name && useradd --uid $UID --gid $docker_user_name --shell /bin/bash --create-home $docker_user_name \
     && apt-get update && apt-get install -y sudo \
     && echo "$docker_user_name ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
 
 # Install necessary dependencies
 RUN apt-get update && apt-get -y upgrade && apt-get install -y \
@@ -50,7 +52,9 @@ RUN apt-get update && apt-get install -y \
     ros-${ROS_DISTRO}-rqt-tf-tree \
     ros-${ROS_DISTRO}-rqt-graph \
     ros-${ROS_DISTRO}-rqt-robot-steering \    
-    ros-${ROS_DISTRO}-rviz-imu-plugin \    
+    ros-${ROS_DISTRO}-rviz-imu-plugin \ 
+    ros-${ROS_DISTRO}-behaviortree-cpp-v3 \  
+    ros-${ROS_DISTRO}-tf2-geometry-msgs \ 
     && rm -rf /var/lib/apt/lists/*
 
 

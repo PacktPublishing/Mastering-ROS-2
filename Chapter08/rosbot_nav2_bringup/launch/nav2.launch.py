@@ -44,6 +44,7 @@ def generate_launch_description():
         executable='amcl',
         name='amcl',
         output='screen',
+        parameters=[os.path.join(pkg_rosbot, 'config', 'amcl_params.yaml')],
     )
 
     map_server_node = Node(
