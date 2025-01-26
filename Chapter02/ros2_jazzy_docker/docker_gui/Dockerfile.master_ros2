@@ -8,14 +8,17 @@ ARG docker_user_name
 ARG ros_ws
 
 # The group identifier and User identifier for user creation
-ARG GID=10001
-ARG UID=10001
+ARG GID=1000
+ARG UID=1000
 
 # Set up environment variables
 ENV DEBIAN_FRONTEND=noninteractive
 ENV HOME="/home/$docker_user_name"
 ENV ROS_DISTRO=jazzy
 ENV ROS_WS=${HOME}/$ros_ws
+
+# Delete user if it exists in container (Ubuntu Noble: ubuntu)
+RUN if id -u $UID ; then userdel `id -un $UID` ; fi
 
 # Add user and install sudo
 RUN groupadd --gid $GID $docker_user_name && useradd --uid $UID --gid $docker_user_name --shell /bin/bash --create-home $docker_user_name \
