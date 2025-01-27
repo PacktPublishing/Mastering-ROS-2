@@ -14,7 +14,7 @@ groot2_executable = join(environ.get("HOME", "/"), "Groot2/bin/groot2")
 
 def get_autonomy_and_visualization_nodes(context, *args, **kwargs):
 
-    xml_file_name = "nav_tree_naive.xml"
+    xml_file_name = "nav_tree.xml"
     print(f"\nUsing Behavior tree file: {xml_file_name}\n")
 
     pkg_tb_autonomy = get_package_share_directory("nav2_bt_client")

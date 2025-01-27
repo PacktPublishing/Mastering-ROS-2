@@ -18,7 +18,7 @@
 using namespace std::chrono_literals;
 
 const std::string default_bt_xml_file = 
-    ament_index_cpp::get_package_share_directory("nav2_bt_client") + "/bt_xml/nav_tree_naive.xml";
+    ament_index_cpp::get_package_share_directory("nav2_bt_client") + "/bt_xml/nav_tree.xml";
 const std::string tb_worlds_share_dir = 
     ament_index_cpp::get_package_share_directory("nav2_bt_client");
 const std::string default_location_file =
