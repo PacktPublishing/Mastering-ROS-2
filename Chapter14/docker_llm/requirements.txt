@@ -1,0 +1,5 @@
+streamlit
+openai
+langchain-openai
+jpl-rosa
+transforms3d

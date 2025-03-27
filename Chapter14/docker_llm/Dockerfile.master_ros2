@@ -1,0 +1,94 @@
+# Use the official ROS Jazzy desktop full base image
+FROM osrf/ros:jazzy-desktop-full
+
+# Name of docker user as argument 
+ARG docker_user_name
+# Name of the ros workspace to mount
+ARG ros_ws
+
+# The group identifier and User identifier for user creation
+ARG GID=1000
+ARG UID=1000
+
+# Set up environment variables
+ENV DEBIAN_FRONTEND=noninteractive
+ENV HOME="/home/$docker_user_name"
+ENV ROS_DISTRO=jazzy
+ENV ROS_WS=${HOME}/$ros_ws
+
+# Delete user if it exists in container (Ubuntu Noble: ubuntu)
+RUN if id -u $UID ; then userdel `id -un $UID` ; fi
+
+# Add user and install sudo
+RUN groupadd --gid $GID $docker_user_name && useradd --uid $UID --gid $docker_user_name --shell /bin/bash --create-home $docker_user_name \
+    && apt-get update && apt-get install -y sudo \
+    && echo "$docker_user_name ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+# Install necessary dependencies
+RUN apt-get update && apt-get -y upgrade && apt-get install -y \
+    git \
+    python3-pip \
+    python3-venv \
+    python3-colcon-common-extensions \
+    python3-vcstool \
+    nano \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install MoveIt 2, ROS 2 Control, and their dependencies
+RUN apt-get update && apt-get install -y \
+    ros-${ROS_DISTRO}-navigation2 \
+    ros-${ROS_DISTRO}-moveit \  
+    ros-${ROS_DISTRO}-ur \      
+    ros-${ROS_DISTRO}-ur-simulation-gz \      
+    ros-${ROS_DISTRO}-nav2-bringup \   
+    ros-${ROS_DISTRO}-nav2-minimal-tb* \ 
+    ros-${ROS_DISTRO}-slam-toolbox \       
+    ros-${ROS_DISTRO}-ros2-control \
+    ros-${ROS_DISTRO}-ros2-controllers \
+    ros-${ROS_DISTRO}-controller-manager \
+    ros-${ROS_DISTRO}-rmw-cyclonedds-cpp \
+    ros-${ROS_DISTRO}-ros-gz \
+    ros-${ROS_DISTRO}-rviz-visual-tools \
+    ros-${ROS_DISTRO}-joint-state-publisher \
+    ros-$ROS_DISTRO-joint-state-publisher-gui \
+    ros-${ROS_DISTRO}-gz-ros2-control \
+    ros-${ROS_DISTRO}-gz-ros2-control-demos \
+    ros-${ROS_DISTRO}-rqt-tf-tree \
+    ros-${ROS_DISTRO}-rqt-graph \
+    ros-${ROS_DISTRO}-rqt-robot-steering \    
+    ros-${ROS_DISTRO}-rviz-imu-plugin \ 
+    ros-${ROS_DISTRO}-behaviortree-cpp-v3 \  
+    ros-${ROS_DISTRO}-tf2-geometry-msgs \ 
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements.txt and install Python dependencies in a virtual environment
+COPY requirements.txt /tmp/requirements.txt
+
+# Create virtual environment and set permissions
+RUN python3 -m venv /opt/venv && \
+    chown -R root:root /opt/venv && \
+    chmod -R 755 /opt/venv
+
+# Install Python packages in virtual environment
+RUN /opt/venv/bin/pip install --upgrade pip && \
+    /opt/venv/bin/pip install -r /tmp/requirements.txt
+
+# Set proper ownership after installations
+RUN chown -R $docker_user_name:$docker_user_name /opt/venv
+
+# Set ownership to user
+RUN chown -R $docker_user_name:$docker_user_name ${HOME}
+
+# Switch to user
+USER $docker_user_name
+
+# Copy ros ws entry point
+COPY ros_ws_entrypoint.sh /ros_ws_entrypoint.sh
+
+WORKDIR $ROS_WS
+
+# Set the virtual environment path
+ENV PATH="/opt/venv/bin:$PATH"
+ENV PYTHONPATH="/opt/venv/lib/python3.12/site-packages:/opt/ros/jazzy/lib/python3.12/site-packages"
+# Entrypoint
+ENTRYPOINT ["/ros_entrypoint.sh"]
