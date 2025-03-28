@@ -1,7 +1,7 @@
-#include "cmd_vel/cmd_vel.h"
-#include <pluginlib/class_list_macros.hpp>
-#include <rclcpp/rclcpp.hpp>
-#include <sstream>
+#include "cmd_vel/cmd_vel.h" 
+#include <pluginlib/class_list_macros.hpp> 
+#include <rclcpp/rclcpp.hpp> 
+#include <sstream>  
 
 namespace cmd_vel {
     CmdVel::CmdVel() : rqt_gui_cpp::Plugin(),   // Call base class constructor
@@ -78,8 +78,7 @@ namespace cmd_vel {
     void CmdVel::onBackwardButton() {
         cmd_vel_msg_ = geometry_msgs::msg::Twist();
         cmd_vel_msg_.linear.x = -des_vel_;
-        if( enable_streaming_ )
-            if( cmd_vel_publisher_ ) cmd_vel_publisher_->publish( cmd_vel_msg_ );
+        if( enable_streaming_ && cmd_vel_publisher_ ) cmd_vel_publisher_->publish( cmd_vel_msg_ );
     }     
 
     void CmdVel::onLeftButton() {

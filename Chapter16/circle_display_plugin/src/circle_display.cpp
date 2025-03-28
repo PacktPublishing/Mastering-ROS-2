@@ -7,6 +7,7 @@ namespace rviz_circle_plugin {
 
   void CircleDisplay::onInitialize() {
     MFDClass::onInitialize();
+  
     point_shape_ =  std::make_unique<rviz_rendering::Shape>(rviz_rendering::Shape::Type::Sphere, scene_manager_, scene_node_);
     // Create a BillboardLine to represent the circle's circumference
     circle_line_ = std::make_unique<rviz_rendering::BillboardLine>(scene_manager_, scene_node_);
@@ -17,13 +18,13 @@ namespace rviz_circle_plugin {
     line_width_property_ = std::make_unique<rviz_common::properties::FloatProperty>(
       "Line Width", 0.1, "Width of the circle line.", this, SLOT(updateStyleLine()));
     color_property_ = std::make_unique<rviz_common::properties::ColorProperty>(
-        "Point Color", QColor(255, 0, 0), "Color to draw the point.", this, SLOT(updateStyle()));
+        "Point Color", QColor(255, 0, 0), "Color to draw the point.", this, SLOT(updateStylePoint()));
     circle_width_property_ = std::make_unique<rviz_common::properties::FloatProperty>(
-        "Ceneter Width", 0.1, "Width to center point.", this, SLOT(updateStyle()));
+        "Ceneter Width", 0.1, "Width to center point.", this, SLOT(updateStylePoint()));
 
 
         
-    updateStyle();
+    updateStylePoint();
     updateStyleLine();
 
   }
@@ -61,13 +62,15 @@ void CircleDisplay::processMessage(const circle_msgs::msg::Circle::ConstSharedPt
   }  
 }
 
-void CircleDisplay::updateStyle(){
+void CircleDisplay::updateStylePoint(){
   
   Ogre::ColourValue color = rviz_common::properties::qtToOgre(color_property_->getColor());
-  point_shape_->setColor(color);
-  float size = circle_width_property_->getFloat();
-  point_shape_->setScale(Ogre::Vector3(size, size, size));
-
+  
+  if( point_shape_ ) {
+    point_shape_->setColor(color);
+    float size = circle_width_property_->getFloat();
+    point_shape_->setScale(Ogre::Vector3(size, size, size));
+  }
 }
 
 void CircleDisplay::updateStyleLine(){

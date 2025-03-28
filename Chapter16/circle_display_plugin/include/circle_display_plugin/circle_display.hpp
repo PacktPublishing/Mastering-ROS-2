@@ -1,22 +1,23 @@
 #ifndef RVIZ_PLUGIN_TUTORIAL__POINT_DISPLAY_HPP_
 #define RVIZ_PLUGIN_TUTORIAL__POINT_DISPLAY_HPP_
 
-#include <memory>
-#include <rviz_common/message_filter_display.hpp>
-#include <circle_msgs/msg/circle.hpp>
+#include <OgreVector3.h>  
+#include <circle_msgs/msg/circle.hpp>  
+#include <memory>  
+#include <rviz_common/display_context.hpp>  
+#include <rviz_common/frame_manager_iface.hpp>  
+#include <rviz_common/interaction/selection_manager.hpp>  
+#include <rviz_common/logging.hpp>  
+#include <rviz_common/message_filter_display.hpp>  
+#include <rviz_common/properties/parse_color.hpp>  
+#include <rviz_rendering/objects/billboard_line.hpp>  
+#include <rviz_rendering/objects/grid.hpp>  
 #include <rviz_rendering/objects/shape.hpp>
-#include <rviz_common/properties/color_property.hpp>
-#include <rviz_common/logging.hpp>
-#include <rviz_common/display_context.hpp>
-#include <rviz_common/frame_manager_iface.hpp>
-#include <rviz_common/interaction/selection_manager.hpp>
-#include <rviz_common/properties/parse_color.hpp>
-#include <rviz_common/properties/property.hpp>
-#include <rviz_rendering/objects/grid.hpp>
-#include <rviz_rendering/objects/billboard_line.hpp>
-#include <OgreVector3.h>
 
 #include <rviz_common/properties/float_property.hpp>
+#include <rviz_common/properties/color_property.hpp>
+#include <rviz_common/properties/property.hpp>
+
 
 namespace rviz_circle_plugin
 {
@@ -25,7 +26,7 @@ class CircleDisplay
 {
   Q_OBJECT
   private Q_SLOTS:
-  void updateStyle();
+  void updateStylePoint();
   void updateStyleLine();
 
 

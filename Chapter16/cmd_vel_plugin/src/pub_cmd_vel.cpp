@@ -23,11 +23,12 @@ namespace cmd_vel_plugin {
                             gz::sim::EventManager &_eventMgr) final;
     public: void cmd_vel_cb( const geometry_msgs::msg::Twist );
 
-    private: rclcpp::Node::SharedPtr ros_node_; 
-    private: rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr ros_subscriber_;
-    private: gz::transport::Node::Publisher gz_publisher_;
-    private: gz::transport::Node gz_node_;
-    private: gz::msgs::Twist cmd_vel_msg_;
+    private: 
+      rclcpp::Node::SharedPtr ros_node_; 
+      rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr ros_subscriber_;
+      gz::transport::Node::Publisher gz_publisher_;
+       gz::transport::Node gz_node_;
+     gz::msgs::Twist cmd_vel_msg_;
 
   };
 }
@@ -42,12 +43,19 @@ GZ_ADD_PLUGIN (
 using namespace cmd_vel_plugin;
 
 void PubCmdVel::cmd_vel_cb( const geometry_msgs::msg::Twist t) {
-
-    double vx = (t.linear.x < 0.2) ? t.linear.x : 0.2; 
+    double vx = t.linear.x;
+    if( vx > 0.2) vx = 0.2;
+    else if (vx < -0.2) vx = -0.2;
     cmd_vel_msg_.mutable_linear()->set_x (vx);
-    double vz = (t.linear.z < 0.2) ? t.linear.z : 0.2; 
+    
+    double vz = t.linear.z;
+    if( vz > 0.2) vz = 0.2;
+    else if (vz < -0.2) vz = -0.2;
     cmd_vel_msg_.mutable_linear()->set_z (vz);
-    double vrot_z = (t.angular.z < 0.5) ? t.angular.z : 0.5;
+    
+    double vrot_z = t.angular.z;
+    if( vrot_z > 0.5 ) vrot_z = 0.5;
+    else if (vrot_z < -0.5) vrot_z = 0.5;
     cmd_vel_msg_.mutable_angular()->set_z(vrot_z);
  
 }
