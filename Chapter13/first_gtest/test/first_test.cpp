@@ -2,17 +2,17 @@
 #include <cmath>
 
 // The function to be tested
-constexpr double PI = 3.14159265358979323846;
-constexpr double DEG_TO_RAD = PI / 180.0;
+
+constexpr double DEG_TO_RAD = M_PI / 180.0;
 
 double degreesToRadians(double degrees) {
     double radians = degrees * DEG_TO_RAD;
     
-    while (radians > PI) {
-        radians -= 2.0 * PI;
+    while (radians >= M_PI) {
+        radians -= 2.0 * M_PI;
     }
-    while (radians < -PI) {
-        radians += 2.0 * PI;
+    while (radians < -M_PI) {
+        radians += 2.0 * M_PI;
     }
     
     return radians;
@@ -21,21 +21,21 @@ double degreesToRadians(double degrees) {
 
 TEST(AngleConversionTest, HandlesPositiveAngles) {
     EXPECT_NEAR(degreesToRadians(0), 0.0, 1e-9);
-    EXPECT_NEAR(degreesToRadians(180), PI, 1e-9);
-    EXPECT_NEAR(degreesToRadians(90), PI / 2.0, 1e-9);
+    EXPECT_NEAR(degreesToRadians(180), -M_PI, 1e-9);
+    EXPECT_NEAR(degreesToRadians(90), M_PI / 2.0, 1e-9);
     EXPECT_NEAR(degreesToRadians(360), 0.0, 1e-9);
 }
 
 TEST(AngleConversionTest, HandlesNegativeAngles) {
-    EXPECT_NEAR(degreesToRadians(-180), -PI, 1e-9);
-    EXPECT_NEAR(degreesToRadians(-90), -PI / 2.0, 1e-9);
+    EXPECT_NEAR(degreesToRadians(-180), -M_PI, 1e-9);
+    EXPECT_NEAR(degreesToRadians(-90), -M_PI / 2.0, 1e-9);
     EXPECT_NEAR(degreesToRadians(-360), 0.0, 1e-9);
 }
 
 TEST(AngleConversionTest, HandlesOverflowAngles) {
     EXPECT_NEAR(degreesToRadians(720), 0.0, 1e-9);
-    EXPECT_NEAR(degreesToRadians(540), -PI, 1e-9);
-    EXPECT_NEAR(degreesToRadians(-540), PI, 1e-9);
+    EXPECT_NEAR(degreesToRadians(540), M_PI, 1e-9);
+    EXPECT_NEAR(degreesToRadians(-540), -M_PI, 1e-9);
 }
 
 TEST(AngleConversionTest, HandlesSmallAngles) {
