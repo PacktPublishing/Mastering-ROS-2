@@ -3,18 +3,18 @@
 using namespace std;
 
 void Px4Control::arm() {
-	RCLCPP_INFO(this->get_logger(), "Arming");
-	send_cmd(VehicleCommand::VEHICLE_CMD_COMPONENT_ARM_DISARM, 1.0, 0.0);
+  RCLCPP_INFO(this->get_logger(), "Arming");	
+  send_cmd(VehicleCommand::VEHICLE_CMD_COMPONENT_ARM_DISARM, VehicleCommand::ARMING_ACTION_ARM, 0.0);
 }
 
 void Px4Control::disarm() {
-	RCLCPP_INFO(this->get_logger(), "Disarming");
-	send_cmd(VehicleCommand::VEHICLE_CMD_COMPONENT_ARM_DISARM, 0.0, 0.0);
+  RCLCPP_INFO(this->get_logger(), "Disarming");
+  send_cmd(VehicleCommand::VEHICLE_CMD_COMPONENT_ARM_DISARM, VehicleCommand::ARMING_ACTION_DISARM, 0.0);
 }
 void Px4Control::uav_pose_cb(const px4_msgs::msg::VehicleLocalPosition::SharedPtr msg) {
-    _curr_x = msg->x;
-    _curr_y = msg->y;
-    _curr_z = msg->z;
+    curr_x_ = msg->x;
+    curr_y_ = msg->y;
+    curr_z_ = msg->z;
 }
 
 void Px4Control::srv_callback(rclcpp::Client<px4_msgs::srv::VehicleCommand>::SharedFuture future) {
@@ -22,7 +22,7 @@ void Px4Control::srv_callback(rclcpp::Client<px4_msgs::srv::VehicleCommand>::Sha
     if (status == std::future_status::ready) {
         auto reply = future.get()->reply;
         uint8_t service_result_ = reply.result;
-        _action_done = true;
+        action_done_.store(true);
     } 
     else {
         RCLCPP_INFO(this->get_logger(), "Service In-Progress...");  
@@ -41,7 +41,7 @@ void Px4Control::publish_offboard_ctrl_mode() {
         msg.attitude = false;
         msg.body_rate = false;
         msg.timestamp = this->get_clock()->now().nanoseconds() / 1000;
-    	_offboard_ctrl_mode_publisher->publish(msg);
+    	offboard_ctrl_mode_publisher_->publish(msg);
         loop_rate.sleep();
     }
 }
@@ -61,7 +61,7 @@ void Px4Control::send_cmd(uint16_t command, float param1, float param2) {
 	cmd.timestamp = this->get_clock()->now().nanoseconds() / 1000;
 	request->request = cmd;
 
-	auto result = _cmd_client->async_send_request(request, std::bind(&Px4Control::srv_callback, this,
+	auto result = cmd_client_->async_send_request(request, std::bind(&Px4Control::srv_callback, this,
                            std::placeholders::_1));
 }
 
@@ -71,9 +71,7 @@ struct Point3D {
 
 // Function to calculate the Euclidean distance between two 3D points
 double calculateDistance(const Point3D& start, const Point3D& end) {
-    return std::sqrt(std::pow(end.x - start.x, 2) +
-                     std::pow(end.y - start.y, 2) +
-                     std::pow(end.z - start.z, 2));
+    return std::hypot(end.x - start.x, end.y - start.y, end.z - start.z);
 }
 
 std::vector<Point3D> planTrajectory(const Point3D& start, const Point3D& end, double v_max, double time_step) {
@@ -89,9 +87,9 @@ std::vector<Point3D> planTrajectory(const Point3D& start, const Point3D& end, do
     int num_steps = std::ceil(total_time / time_step);
 
     // Calculate the velocity components for each axis
-    double v_x = (end.x - start.x) / total_time;
-    double v_y = (end.y - start.y) / total_time;
-    double v_z = (end.z - start.z) / total_time;
+    double v_x = (end.x - start.x) / (num_steps * time_step);
+    double v_y = (end.y - start.y) / (num_steps * time_step);
+    double v_z = (end.z - start.z) / (num_steps * time_step);
 
     // Generate waypoints for each time step
     for (int i = 0; i <= num_steps; ++i) {
@@ -111,46 +109,47 @@ std::vector<Point3D> planTrajectory(const Point3D& start, const Point3D& end, do
 
 void Px4Control::menu() {
 
-    boost::thread publish_offboard_ctrl_mode_t( &Px4Control::publish_offboard_ctrl_mode, this );
+    std::thread publish_offboard_ctrl_mode_t( &Px4Control::publish_offboard_ctrl_mode, this );
 
     string cmd = "";
     while (rclcpp::ok() && cmd != "exit")  {
-        _action_done = false;
-        cout << "Insert the desired command" << endl;
-        cout << "arm - to arm the drone" << endl;
-        cout << "disarm - to disarm the drone" << endl;
-        cout << "takeoff - to take the drone" << endl;
-        cout << "move - specify a target point to reach" << endl;
-        cout << endl;
+        action_done_.store(false);
+        
+        RCLCPP_INFO(this->get_logger(), "Insert the desired command");
+        RCLCPP_INFO(this->get_logger(), "arm - to arm the drone");
+        RCLCPP_INFO(this->get_logger(), "disarm - to disarm the drone");
+        RCLCPP_INFO(this->get_logger(), "takeoff - to take the drone");
+        RCLCPP_INFO(this->get_logger(), "move - specify a target point to reach");
+        RCLCPP_INFO(this->get_logger(), "exit - to exit");
 
         getline( cin, cmd );
 
         if( cmd == "arm") {
             arm();
-            while( !_action_done) usleep(0.1*1e6);
+            while( !action_done_.load()) usleep(0.1*1e6);
         }
         else if ( cmd == "disarm" ) {
             disarm();
-            while( !_action_done) usleep(0.1*1e6);
+            while( !action_done_.load()) usleep(0.1*1e6);
         }
         else if ( cmd == "takeoff") {
             send_cmd(VehicleCommand::VEHICLE_CMD_DO_SET_MODE, 1, 6);
             sleep(1);
             px4_msgs::msg::TrajectorySetpoint msg{};
-            msg.position = {_curr_x, _curr_y, _curr_z-5.0};
+            msg.position = {curr_x_, curr_y_, curr_z_-5.0};
             msg.yaw = 0.0; 
             msg.timestamp = this->get_clock()->now().nanoseconds() / 1000;
-            _traj_cmd_pub->publish(msg);
+            traj_cmd_pub_->publish(msg);
         }
         else if( cmd == "move") {
             float x, y, z;
             std::string input;
-            std::cout << "Insert the destination point (x, y, z): ";
+            RCLCPP_INFO(this->get_logger(), "Insert the destination point as x y z:");
             std::getline(std::cin, input);  // Read entire line
             std::istringstream stream(input);
             stream >> x >> y >> z;
 
-            Point3D start = {_curr_x, _curr_y, _curr_z};  
+            Point3D start = {curr_x_, curr_y_, curr_z_};  
             Point3D end = {x, y, z}; 
             double v_max = 0.5; // 2 meters per second
             double time_step = 1.0/10.0; 
@@ -162,7 +161,7 @@ void Px4Control::menu() {
                 msg.position = {point.x, point.y, point.z};
                 msg.yaw = 0.0; 
                 msg.timestamp = this->get_clock()->now().nanoseconds() / 1000;
-                _traj_cmd_pub->publish(msg);
+                traj_cmd_pub_->publish(msg);
                 loop_rate.sleep();
             }
         }
@@ -170,15 +169,15 @@ void Px4Control::menu() {
 }
 
 void Px4Control::run() {
-    boost::thread menu_t( &Px4Control::menu, this);
+    std::thread menu_t( &Px4Control::menu, this);
     rclcpp::spin(shared_from_this());
 }
 
 
 int main(int argc, char *argv[]) {
-	rclcpp::init(argc, argv);
-	auto node = std::make_shared<Px4Control>();    
-    node->run();
-    rclcpp::shutdown();
-	return 0;
+  rclcpp::init(argc, argv);
+  auto node = std::make_shared<Px4Control>();    
+  node->run();
+  rclcpp::shutdown();
+  return 0;
 }
